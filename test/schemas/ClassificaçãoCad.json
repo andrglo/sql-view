@@ -1,0 +1,26 @@
+{
+  "type": "object",
+  "title": "Classcad",
+  "description": "Classificação da pessoa no cadastro",
+  "properties": {
+    "NUMCAD": {
+      "title": "Número",
+      "description": "Número",
+      "type": "integer",
+      "format": "list",
+      "required": true,
+      "$ref": "CADASTRO",
+      "primaryKey": true
+    },
+    "Classe": {
+      "title": "Classe",
+      "description": "Classe",
+      "type": "string",
+      "maxLength": 20,
+      "required": true,
+      "format": "list",
+      "$ref": "Classificação",
+      "primaryKey": true
+    }
+  }
+}

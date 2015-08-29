@@ -1,0 +1,480 @@
+{
+  "type": "object",
+  "title": "Fornec",
+  "description": "Fornecedores",
+  "properties": {
+    "id": {
+      "title": "Número do fornecedor",
+      "description": "Número de cadastro do fornecedor",
+      "type": "integer",
+      "format": "list",
+      "required": true,
+      "$ref": "CADASTRO",
+      "field": "FORNECEDOR"
+    },
+    "SIGLAFOR": {
+      "title": "Identificação",
+      "description": "Sigla do fornecedor",
+      "type": "string",
+      "maxLength": 20
+    },
+    "INSCEST": {
+      "description": "P/CONV-Agora é em Cadastro",
+      "type": "string",
+      "maxLength": 18
+    },
+    "CONTATO": {
+      "title": "Contato",
+      "description": "Pessoa para contato",
+      "type": "string",
+      "maxLength": 50
+    },
+    "SegmentodeMercado": {
+      "title": "Segmento de mercado",
+      "description": "Segmento de mercado - ramo de atividade",
+      "type": "string",
+      "maxLength": 50
+    },
+    "NUMCOMPP": {
+      "description": "Número de compras a prazo",
+      "type": "integer",
+      "format": "fixed"
+    },
+    "NUMCOMPV": {
+      "description": "Número de compras a vista",
+      "type": "integer",
+      "format": "fixed"
+    },
+    "CODCTA": {
+      "title": "Contabilização",
+      "description": "Contabilização",
+      "type": "string",
+      "maxLength": 100
+    },
+    "CODCTAAdiantamento": {
+      "title": "Contabilização do adiantamento",
+      "description": "Contabilização do adiantamento",
+      "type": "string",
+      "maxLength": 100
+    },
+    "VALCOMPP": {
+      "description": "Valor total das compras a prazo",
+      "type": "number",
+      "maxLength": 14,
+      "decimals": 4
+    },
+    "VALCOMPV": {
+      "description": "Valor total das compras a vista",
+      "type": "number",
+      "maxLength": 14,
+      "decimals": 4
+    },
+    "VALMAIA": {
+      "description": "Valor do maior atraso",
+      "type": "number",
+      "maxLength": 14,
+      "decimals": 4
+    },
+    "VALMAIC": {
+      "description": "Valor da maior compra",
+      "type": "number",
+      "maxLength": 14,
+      "decimals": 4
+    },
+    "VALPRIC": {
+      "description": "Valor da primeira compra",
+      "type": "number",
+      "maxLength": 14,
+      "decimals": 4
+    },
+    "VALULTC": {
+      "description": "Valor da última compra",
+      "type": "number",
+      "maxLength": 14,
+      "decimals": 4
+    },
+    "DATMAIA": {
+      "description": "Data do maior atraso",
+      "type": "string",
+      "format": "date",
+      "timezone": "UTC"
+    },
+    "DATMAIC": {
+      "description": "Data da maior compra",
+      "type": "string",
+      "format": "date",
+      "timezone": "UTC"
+    },
+    "DATPRIC": {
+      "description": "Data da primeira compra",
+      "type": "string",
+      "format": "date",
+      "timezone": "UTC"
+    },
+    "DATULTC": {
+      "description": "Data da última compra",
+      "type": "string",
+      "format": "date",
+      "timezone": "UTC"
+    },
+    "DIASATRASO": {
+      "title": "Maior atraso",
+      "description": "Dias do maior atraso",
+      "type": "integer",
+      "format": "fixed"
+    },
+    "NUMATRASO": {
+      "title": "Nº atrasos",
+      "description": "Número de atrasos",
+      "type": "integer",
+      "format": "fixed"
+    },
+    "NOMAGENCIA": {
+      "title": "Nomeage",
+      "description": "Nome da agencia",
+      "type": "string",
+      "maxLength": 20
+    },
+    "ENDAGENCIA": {
+      "title": "Endage",
+      "description": "Endereco da agencia",
+      "type": "string",
+      "maxLength": 50
+    },
+    "CONTABANCO": {
+      "title": "Contabanco",
+      "description": "Conta corrente",
+      "type": "string",
+      "maxLength": 12
+    },
+    "NUMAGENCIA": {
+      "title": "Numage",
+      "description": "Número da agencia",
+      "type": "string",
+      "maxLength": 6
+    },
+    "CODBANCO": {
+      "title": "Codbanco",
+      "description": "Código do banco",
+      "type": "string",
+      "maxLength": 3
+    },
+    "CAMCOMP": {
+      "description": "Câmara de compensação da conta bancária",
+      "type": "string",
+      "maxLength": 3
+    },
+    "TIPOCONTA": {
+      "title": "Tipo da conta",
+      "description": "Tipo da conta",
+      "type": "string",
+      "maxLength": 1,
+      "enum": [
+        "1-Conta_corrente",
+        "2-Poupança",
+        "3-Conta salário"
+      ],
+      "format": "select",
+      "defaultValue": "1-Conta_corrente"
+    },
+    "FormaPagamento": {
+      "description": "Forma de pagamento ao fornecedor - Pagamento escritural",
+      "type": "string",
+      "maxLength": 1,
+      "enum": [
+        "0-Indefinida",
+        "1-Título em cobrança",
+        "2-Crédito em conta corrente",
+        "3-DOC",
+        "4-Ordem de pagamento",
+        "5-Concessionária",
+        "6-Cheque pagamento",
+        "7-TED CIP",
+        "8-TED STR"
+      ],
+      "format": "select",
+      "defaultValue": "0-Indefinida"
+    },
+    "Crédito PIS": {
+      "title": "PIS",
+      "description": "Indica se o fornecedor gera crédito de PIS",
+      "type": "string",
+      "maxLength": 1,
+      "enum": [
+        "Sim",
+        "Não"
+      ],
+      "format": "checkbox",
+      "defaultValue": "Sim"
+    },
+    "Contabilizar Provisão": {
+      "description": "Indica se deve-se contabilizar a provisão",
+      "type": "string",
+      "maxLength": 1,
+      "enum": [
+        "Sim",
+        "Não"
+      ],
+      "format": "checkbox",
+      "defaultValue": "Sim"
+    },
+    "ETerceiro": {
+      "description": "Indica se deve-se utilizar as categorias específicas para contratação de serviços e RPA´s",
+      "type": "string",
+      "maxLength": 1,
+      "enum": [
+        "Não",
+        "Sim"
+      ],
+      "format": "checkbox",
+      "defaultValue": "Não"
+    },
+    "RetemCSLL": {
+      "description": "Indica se o fornecedor está sujeito à retenção da CSLL na fonte",
+      "type": "string",
+      "maxLength": 1,
+      "enum": [
+        "Sim",
+        "Não"
+      ],
+      "format": "checkbox",
+      "defaultValue": "Sim"
+    },
+    "RetemCOFINS": {
+      "description": "Indica se o fornecedor está sujeito à retenção da COFINS na fonte",
+      "type": "string",
+      "maxLength": 1,
+      "enum": [
+        "Sim",
+        "Não"
+      ],
+      "format": "checkbox",
+      "defaultValue": "Sim"
+    },
+    "RetemPIS": {
+      "description": "Indica se o fornecedor está sujeito à retenção do PIS/PASEP na fonte",
+      "type": "string",
+      "maxLength": 1,
+      "enum": [
+        "Sim",
+        "Não"
+      ],
+      "format": "checkbox",
+      "defaultValue": "Sim"
+    },
+    "CódigoRetençãoIRRF": {
+      "description": "Código da Receita Federal para o recolhimento do IRRF",
+      "type": "string",
+      "maxLength": 10
+    },
+    "CódigoRetençãoPIS": {
+      "description": "Código da Receita Federal para o recolhimento da retenção do PIS",
+      "type": "string",
+      "maxLength": 10
+    },
+    "CódigoRetençãoCOFINS": {
+      "description": "Código da Receita Federal para o recolhimento da retenção da COFINS",
+      "type": "string",
+      "maxLength": 10
+    },
+    "CódigoRetençãoCSLL": {
+      "description": "Código da Receita Federal para o recolhimento da retenção da CSLL",
+      "type": "string",
+      "maxLength": 10
+    },
+    "CódigoRetençãoTF": {
+      "description": "Código da Receita Federal para o recolhimento da retenção do PIS, COFINS e CSLL",
+      "type": "string",
+      "maxLength": 10
+    },
+    "Instalação2ANP": {
+      "description": "Código ANP da Instalação 2 - DPMP",
+      "type": "integer",
+      "format": "fixed"
+    },
+    "OperaçãoANP": {
+      "description": "Código de operação ANP",
+      "type": "string",
+      "maxLength": 7
+    },
+    "CódigoANPMunicípio": {
+      "description": "Código ANP do município (para fornecedores NÃO REGULADOS",
+      "type": "string",
+      "maxLength": 7
+    },
+    "CódigoANPAtividadeEcon": {
+      "description": "Código ANP da atividade econômica (para fornecedores NÃO REGULADOS)",
+      "type": "string",
+      "maxLength": 5
+    },
+    "Porte": {
+      "title": "Porte",
+      "description": "Porte da empresa",
+      "type": "string",
+      "maxLength": 1,
+      "enum": [
+        "0-Indefinido",
+        "1-Microempresa",
+        "2-Pequeno Porte",
+        "3-Médio Porte",
+        "4-Grande Porte"
+      ],
+      "format": "select",
+      "defaultValue": "0-Indefinido"
+    },
+    "ValorVendaServiço": {
+      "description": "Valor da venda do serviço",
+      "type": "number",
+      "format": "fixed",
+      "maxLength": 12,
+      "decimals": 2
+    },
+    "AdicionalValorContratado": {
+      "description": "% adicional ao valor contratado",
+      "type": "number",
+      "format": "fixed",
+      "maxLength": 6,
+      "decimals": 2
+    },
+    "OptanteSimplesNacional": {
+      "description": "(CAMPO ABANDONADO E SUBSTITUIDO POR CADASTRO.TipoSimplesNacional)Indica se o fornecedor é optante pelo Simples Nacional",
+      "type": "string",
+      "maxLength": 1,
+      "enum": [
+        "Não",
+        "Sim"
+      ],
+      "format": "checkbox",
+      "defaultValue": "Não"
+    },
+    "ContribuinteIPI": {
+      "description": "Indica se o fornecedor é contribuinte do IPI",
+      "type": "string",
+      "maxLength": 1,
+      "enum": [
+        "Sim",
+        "Não"
+      ],
+      "format": "checkbox",
+      "defaultValue": "Sim"
+    },
+    "QualifISO9001": {
+      "description": "Qualificado por ter sistema da qualidade ABNT NBR ISO 9001:2008",
+      "type": "string",
+      "maxLength": 1,
+      "enum": [
+        "Não",
+        "Sim"
+      ],
+      "format": "checkbox",
+      "defaultValue": "Não"
+    },
+    "QualifNormaTécnica": {
+      "description": "Qualificado por ter produto em conformidade com as Normas Técnicas",
+      "type": "string",
+      "maxLength": 1,
+      "enum": [
+        "Não",
+        "Sim"
+      ],
+      "format": "checkbox",
+      "defaultValue": "Não"
+    },
+    "QualifVisitaTécnica": {
+      "description": "Qualificado através de visita técnica",
+      "type": "string",
+      "maxLength": 1,
+      "enum": [
+        "Não",
+        "Sim"
+      ],
+      "format": "checkbox",
+      "defaultValue": "Não"
+    },
+    "QualifTesteAmostra": {
+      "description": "Qualificado através de teste em amostras e/ou material aplicado",
+      "type": "string",
+      "maxLength": 1,
+      "enum": [
+        "Não",
+        "Sim"
+      ],
+      "format": "checkbox",
+      "defaultValue": "Não"
+    },
+    "QualifIndicação": {
+      "description": "Qualificado por indicação",
+      "type": "string",
+      "maxLength": 1,
+      "enum": [
+        "Não",
+        "Sim"
+      ],
+      "format": "checkbox",
+      "defaultValue": "Não"
+    },
+    "QualifServiçoExecutado": {
+      "description": "Qualificado através de serviço executado",
+      "type": "string",
+      "maxLength": 1,
+      "enum": [
+        "Não",
+        "Sim"
+      ],
+      "format": "checkbox",
+      "defaultValue": "Não"
+    },
+    "QualifDesempenhoHistórico": {
+      "description": "Qualificado por desempenho histórico",
+      "type": "string",
+      "maxLength": 1,
+      "enum": [
+        "Não",
+        "Sim"
+      ],
+      "format": "checkbox",
+      "defaultValue": "Não"
+    },
+    "QualifExclusividadeMercado": {
+      "description": "Qualificado devido à exclusividade mercado",
+      "type": "string",
+      "maxLength": 1,
+      "enum": [
+        "Não",
+        "Sim"
+      ],
+      "format": "checkbox",
+      "defaultValue": "Não"
+    },
+    "QualifObservação": {
+      "description": "Observações sobre a qualificação",
+      "type": "string",
+      "maxLength": 3000
+    },
+    "eProdutorRural": {
+      "description": "Indica se é produtor rural",
+      "type": "string",
+      "maxLength": 1,
+      "enum": [
+        "Não",
+        "Sim"
+      ],
+      "format": "checkbox",
+      "defaultValue": "Não"
+    },
+    "CONTICMS": {
+      "description": "Indica se é contribuinte do ICMS",
+      "type": "string",
+      "maxLength": 1,
+      "enum": [
+        "Sim",
+        "Não"
+      ],
+      "format": "checkbox",
+      "defaultValue": "Sim"
+    }
+  },
+  "primaryKey": [
+    "FORNECEDOR"
+  ]
+}

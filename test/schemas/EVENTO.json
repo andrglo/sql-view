@@ -1,0 +1,83 @@
+{
+  "type": "object",
+  "title": "Evento",
+  "description": "Categoria",
+  "properties": {
+    "id": {
+      "title": "Categoria",
+      "description": "Categoria",
+      "type": "string",
+      "maxLength": 20,
+      "mask": "evento",
+      "required": true,
+      "field": "CONTAEV",
+      "primaryKey": true
+    },
+    "CODEVENTO": {
+      "description": "Número",
+      "type": "integer",
+      "format": "fixed"
+    },
+    "VCTO": {
+      "description": "Vcto",
+      "type": "integer",
+      "$ref": "DOCPAGVC"
+    },
+    "DESCEVENTO": {
+      "title": "Descrição",
+      "description": "Descrição da categoria",
+      "type": "string",
+      "maxLength": 50,
+      "required": true
+    },
+    "CODCTA": {
+      "title": "Contabilização",
+      "description": "Contabilização",
+      "type": "string",
+      "maxLength": 100
+    },
+    "NATUREZA": {
+      "title": "Natureza",
+      "description": "Natureza da categoria",
+      "type": "string",
+      "maxLength": 1,
+      "enum": [
+        "Devedora",
+        "Credora",
+        "Nenhuma"
+      ],
+      "format": "select",
+      "defaultValue": "Devedora"
+    },
+    "CODCONT": {
+      "title": "Código Contábil",
+      "description": "Código para auxílio de formação de conta contábil",
+      "type": "string",
+      "maxLength": 10
+    },
+    "Inativo": {
+      "title": "Inativo",
+      "description": "Indica se o categoria está inativa",
+      "type": "string",
+      "maxLength": 1,
+      "enum": [
+        "Não",
+        "Sim"
+      ],
+      "format": "checkbox",
+      "defaultValue": "Não"
+    },
+    "doCaixa": {
+      "title": "Caixa",
+      "description": "Indica se a categoria deve ser disponibilizada no caixa remoto",
+      "type": "string",
+      "maxLength": 1,
+      "enum": [
+        "Não",
+        "Sim"
+      ],
+      "format": "checkbox",
+      "defaultValue": "Não"
+    }
+  }
+}

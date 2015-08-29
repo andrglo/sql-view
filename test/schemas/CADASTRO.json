@@ -1,0 +1,254 @@
+{
+  "type": "object",
+  "title": "Cadastro",
+  "description": "Cadastro",
+  "define": {
+    "timestamps": true,
+    "hasTrigger": true
+  },
+  "properties": {
+    "id": {
+      "title": "Nº cadastral",
+      "description": "Numero cadastral",
+      "type": "integer",
+      "autoIncrement": true,
+      "primaryKey": true,
+      "field": "NUMCAD"
+    },
+    "NOMECAD": {
+      "title": "Nome",
+      "description": "Nome da pessoa",
+      "type": "string",
+      "maxLength": 60,
+      "required": true
+    },
+    "IDENT": {
+      "title": "Identificação",
+      "description": "Identificação",
+      "type": "string",
+      "maxLength": 30
+    },
+    "CGCCPF": {
+      "title": "CGC ou CPF",
+      "description": "CNPJ ou CPF",
+      "type": "string",
+      "maxLength": 14,
+      "format": "cpfcnpj"
+    },
+    "INSCEST": {
+      "title": "Incrição Estadual",
+      "description": "Inscrição estadual",
+      "type": "string",
+      "maxLength": 18,
+      "format": "ie",
+      "validations": {
+        "ie": {
+          "args": ["this.ESTADO"]
+        }
+      }
+    },
+    "TELEFONE": {
+      "title": "Telefone",
+      "description": "Telefone",
+      "type": "string",
+      "maxLength": 20,
+      "format": "br-phone"
+    },
+    "FAX": {
+      "title": "Fax",
+      "description": "Fax",
+      "type": "string",
+      "maxLength": 20,
+      "format": "br-phone"
+    },
+    "CELULAR": {
+      "title": "Celular",
+      "description": "Telefone celular",
+      "type": "string",
+      "maxLength": 20,
+      "format": "br-phone"
+    },
+    "NUMLANORI": {
+      "title": "Origem",
+      "description": "Número do lançamento origem",
+      "type": "integer",
+      "format": "fixed"
+    },
+    "NUMLANORI2": {
+      "title": "Outro",
+      "description": "Número do lançamento origem",
+      "type": "integer",
+      "format": "fixed"
+    },
+    "FKOUTRO": {
+      "title": "Outro",
+      "description": "Número do lançamento origem",
+      "type": "integer",
+      "format": "fixed"
+    },
+    "ENDERECO": {
+      "title": "Logradouro",
+      "description": "Endereco",
+      "type": "string",
+      "maxLength": 45,
+      "validations": {
+        "isUppercase": {
+          "message": "ENDERECO must be uppercase"
+        },
+        "isIn": {
+          "args": [["STREET", "AVENUE"]]
+        }
+      }
+    },
+    "NUMERO": {
+      "title": "Número do Logradouro",
+      "description": "Número do logradouro",
+      "type": "string",
+      "maxLength": 6
+    },
+    "COMPLEMENTO": {
+      "title": "Complemento",
+      "description": "Complemento do logradouro",
+      "type": "string",
+      "maxLength": 22
+    },
+    "BAIRRO": {
+      "title": "Bairro",
+      "description": "Bairro",
+      "type": "string",
+      "maxLength": 30
+    },
+    "CIDADE": {
+      "title": "Cidade",
+      "description": "Cidade",
+      "type": "string",
+      "maxLength": 30
+    },
+    "ESTADO": {
+      "title": "UF",
+      "description": "Estado",
+      "type": "string",
+      "maxLength": 2,
+      "format": "list",
+      "mask": "AA",
+      "display": "ESTADOS.NOME",
+      "schema": {
+        "$ref": "ESTADOS",
+        "key": "ESTADO"
+      }
+    },
+    "CEP": {
+      "title": "CEP",
+      "description": "CEP",
+      "type": "string",
+      "maxLength": 8,
+      "format": "cep"
+    },
+    "DATNASC": {
+      "type": "date"
+    },
+    "DATNASCZ": {
+      "type": "datetime"
+    },
+    "DATNASCNOZ": {
+      "type": "datetime",
+      "timezone": "ignore"
+    },
+    "PAIS": {
+      "title": "País",
+      "description": "País",
+      "type": "string",
+      "maxLength": 50
+    },
+    "EMAIL": {
+      "title": "e-mail",
+      "description": "Correio eletrônico",
+      "type": "string",
+      "maxLength": 100,
+      "format": "email"
+    },
+    "PAGINAWEB": {
+      "title": "Endereço Internet",
+      "description": "Endereço da página na Web",
+      "type": "string",
+      "maxLength": 50,
+      "format": "url"
+    },
+    "CONTAEV": {
+      "title": "Categoria",
+      "description": "Categoria",
+      "type": "string",
+      "maxLength": 20,
+      "mask": "evento",
+      "format": "list",
+      "display": "EVENTO.DESCEVENTO",
+      "schema": {
+        "$ref": "EVENTO",
+        "key": "CONTAEV"
+      }
+    },
+    "CONTACC": {
+      "title": "Centro de Custo",
+      "description": "Centro de Custo",
+      "type": "string",
+      "maxLength": 20,
+      "mask": "ccusto",
+      "format": "list",
+      "display": "LCBA9.A09_DESCST",
+      "schema": {
+        "$ref": "LCBA9",
+        "key": "CONTACC"
+      }
+    },
+    "InscriçãoMunicipal": {
+      "title": "Inscrição municipal",
+      "description": "Inscrição municipal",
+      "type": "string",
+      "maxLength": 20
+    },
+    "Inativo": {
+      "title": "Inativo",
+      "description": "Indica se a pessoa está inativa",
+      "type": "string",
+      "maxLength": 1,
+      "enum": [
+        "Não",
+        "Sim"
+      ],
+      "format": "checkbox",
+      "defaultValue": "Não"
+    },
+    "Suframa": {
+      "description": "Inscrição no Suframa",
+      "type": "string",
+      "maxLength": 9
+    },
+    "TipoSimplesNacional": {
+      "title": "Simples Nacional",
+      "description": "Informa o tipo de opção pelo Simples Nacional",
+      "type": "string",
+      "maxLength": 1,
+      "enum": [
+        "1 - Não optante ",
+        "2 - Optante ME/EPP",
+        "3 - Optante MEI"
+      ],
+      "format": "select",
+      "defaultValue": "1 - Não optante "
+    },
+    "VALORLCTO": {
+      "title": "Valor do lançamento",
+      "description": "Valor do lançamento",
+      "type": "number",
+      "format": "fixed",
+      "maxLength": 14,
+      "decimals": 2
+    },
+    "createdAt": {
+      "type": "datetime"
+    },
+    "updatedAt": {
+      "type": "datetime"
+    }
+  }
+}

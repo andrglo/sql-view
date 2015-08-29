@@ -1,0 +1,195 @@
+{
+  "type": "object",
+  "title": "Docpagvc",
+  "description": "Vencimentos de contas a pagar",
+  "properties": {
+    "id": {
+      "title": "Id",
+      "description": "Número identificador do registro",
+      "type": "integer",
+      "autoIncrement": true,
+      "primaryKey": true,
+      "field": "Id",
+      "required": true
+    },
+    "NUMCAD": {
+      "title": "Cadastro",
+      "type": "integer",
+      "format": "list"
+    },
+    "FORNEC": {
+      "title": "Fornecedor",
+      "type": "integer",
+      "format": "list"
+    },
+    "DATAVENC": {
+      "title": "Vencimento",
+      "description": "Data de vencimento",
+      "type": "date",
+      "timezone": "ignore",
+      "required": true
+    },
+    "DATAVENCZ": {
+      "type": "datetime"
+    },
+    "DATAVENCNOZ": {
+      "type": "datetime",
+      "timezone": "ignore"
+    },
+    "CODDOC": {
+      "title": "Documento",
+      "description": "Código do documento",
+      "type": "string",
+      "maxLength": 3
+    },
+    "NUMDOC": {
+      "title": "Número",
+      "description": "Número do documento",
+      "type": "integer",
+      "format": "fixed"
+    },
+    "SERDOC": {
+      "title": "Série",
+      "description": "Série",
+      "type": "string",
+      "maxLength": 2
+    },
+    "VALOR": {
+      "title": "Valor",
+      "description": "Valor da parcela",
+      "type": "number",
+      "format": "fixed",
+      "maxLength": 12,
+      "decimals": 2,
+      "required": true
+    },
+    "SITPGTO": {
+      "title": "Situação",
+      "description": "Situação",
+      "type": "string",
+      "maxLength": 1,
+      "enum": [
+        "Pendente",
+        "Quitado",
+        "Transferido",
+        "Cancelado",
+        "Renegociado",
+        "Devolvido",
+        "Adiantado",
+        "Histórico"
+      ],
+      "format": "select",
+      "defaultValue": "Pendente"
+    },
+    "DATAPGTO": {
+      "title": "Quitação",
+      "description": "Data do pagamento",
+      "type": "string",
+      "format": "date",
+      "timezone": "UTC"
+    },
+    "DESCONTO": {
+      "title": "Desconto",
+      "description": "Desconto",
+      "type": "number",
+      "format": "fixed",
+      "maxLength": 12,
+      "decimals": 2
+    },
+    "ACRESCIMO": {
+      "title": "Acréscimo",
+      "description": "Acréscimo",
+      "type": "number",
+      "format": "fixed",
+      "maxLength": 12,
+      "decimals": 2
+    },
+    "OUTROS": {
+      "title": "Outros",
+      "description": "Outros",
+      "type": "number",
+      "format": "fixed",
+      "maxLength": 12,
+      "decimals": 2
+    },
+    "VALORPAGO": {
+      "title": "Valor pago",
+      "description": "Valor pago",
+      "type": "number",
+      "format": "fixed",
+      "maxLength": 12,
+      "decimals": 2
+    },
+    "DataEnvioPgtoEsc": {
+      "title": "Data envio pgto esc.",
+      "description": "Data de envio do pagamento escritural",
+      "type": "string",
+      "format": "date",
+      "timezone": "UTC"
+    },
+    "DataConfirmacaoPgtoEsc": {
+      "title": "Data confirmação pgto esc.",
+      "description": "Data de confirmação do pagamento escritural",
+      "type": "string",
+      "format": "date",
+      "timezone": "UTC"
+    },
+    "PgtoEscTipMov": {
+      "description": "Tipo de movimento para pgto escritural informado ao banco",
+      "type": "string",
+      "maxLength": 1,
+      "enum": [
+        "0-Inclusão",
+        "5-Alteração",
+        "9-Exclusão"
+      ],
+      "format": "select",
+      "defaultValue": "0-Inclusão"
+    },
+    "Avisar": {
+      "description": "Avisar quando vencida",
+      "type": "string",
+      "maxLength": 1,
+      "enum": [
+        "Sim",
+        "Não"
+      ],
+      "format": "checkbox",
+      "defaultValue": "Sim"
+    },
+    "Hora do próximo aviso": {
+      "description": "Hora do próximo aviso",
+      "type": "string",
+      "format": "date",
+      "timezone": "UTC"
+    },
+    "HISTORICO": {
+      "title": "Histórico",
+      "description": "Histórico",
+      "type": "string",
+      "maxLength": 100
+    },
+    "SITAUT": {
+      "title": "Autorizado",
+      "description": "Situação da autorização de pagamento",
+      "type": "string",
+      "maxLength": 1,
+      "enum": [
+        "Não",
+        "Sim"
+      ],
+      "format": "checkbox",
+      "defaultValue": "Não"
+    },
+    "AutorizadorAcrescimos": {
+      "description": "Nome do autorizador do acréscimo acima do permitido",
+      "type": "string",
+      "maxLength": 45
+    },
+    "ResponsavelQuitacao": {
+      "description": "Nome do operador que efetuou a quitação",
+      "type": "string",
+      "maxLength": 45
+    }
+  }
+}

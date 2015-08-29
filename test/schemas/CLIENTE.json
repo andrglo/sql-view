@@ -1,0 +1,542 @@
+{
+  "type": "object",
+  "title": "Cliente",
+  "description": "Clientes",
+  "properties": {
+    "id": {
+      "title": "Nº Cadastral",
+      "description": "Número de cadastro do cliente",
+      "type": "integer",
+      "format": "list",
+      "required": true,
+      "$ref": "CADASTRO",
+      "field": "CLIENTE",
+      "primaryKey": true
+    },
+    "SIGLACLI": {
+      "title": "Identificação",
+      "description": "Sigla do cliente",
+      "type": "string",
+      "maxLength": 20
+    },
+    "CONTATO": {
+      "title": "Contato",
+      "description": "Pessoa para contato",
+      "type": "string",
+      "maxLength": 50
+    },
+    "INSCEST": {
+      "title": "Incrição estadual",
+      "type": "string",
+      "maxLength": 18
+    },
+    "Suspenso": {
+      "title": "Suspenso",
+      "description": "Indica se o cliente está suspenso",
+      "type": "string",
+      "maxLength": 1,
+      "enum": [
+        "Não",
+        "Sim"
+      ],
+      "format": "checkbox",
+      "defaultValue": "Não"
+    },
+    "Vendedor": {
+      "title": "Vendedor",
+      "description": "Vendedor designado para o cliente",
+      "type": "integer",
+      "format": "list",
+      "$ref": "CADASTRO"
+    },
+    "CLASSIFIC": {
+      "title": "ABC",
+      "description": "Classificação ABC",
+      "type": "string",
+      "maxLength": 1,
+      "enum": [
+        "A",
+        "B",
+        "C"
+      ],
+      "format": "select",
+      "defaultValue": "A"
+    },
+    "Relacionamento": {
+      "title": "Relacionamento",
+      "description": "Nível de relacionamento do cliente com a empresa",
+      "type": "string",
+      "maxLength": 1,
+      "enum": [
+        "Cliente",
+        "Prospect",
+        "Suspect"
+      ],
+      "format": "select",
+      "defaultValue": "Cliente"
+    },
+    "RAMO": {
+      "title": "Segmento de mercado",
+      "description": "Segmento de mercado (ramo de atividade)",
+      "type": "string",
+      "maxLength": 50
+    },
+    "CONTICMS": {
+      "title": "Contribuinte do ICMS",
+      "description": "Contribuinte do ICMS",
+      "type": "string",
+      "maxLength": 1,
+      "enum": [
+        "Sim",
+        "Não",
+        "Contribuinte isento de Inscrição Estadual"
+      ],
+      "format": "select",
+      "defaultValue": "Sim"
+    },
+    "ENDCOB": {
+      "title": "Endereço cobrança",
+      "description": "Endereco de cobranca",
+      "type": "string",
+      "maxLength": 45
+    },
+    "NUMCOB": {
+      "title": "Nº EndCob",
+      "description": "Número do endereço de cobrança",
+      "type": "string",
+      "maxLength": 6
+    },
+    "COMPCOB": {
+      "title": "Compl. EndCob",
+      "description": "Complemento do endereço e cobrança",
+      "type": "string",
+      "maxLength": 22
+    },
+    "BAIRROCOB": {
+      "title": "Bairro cobrança",
+      "description": "Bairro de cobranca",
+      "type": "string",
+      "maxLength": 30
+    },
+    "CIDADECOB": {
+      "title": "Cidade cobrança",
+      "description": "Cidade de cobranca",
+      "type": "string",
+      "maxLength": 30
+    },
+    "CEPCOB": {
+      "title": "CEP cob.",
+      "description": "CEP de cobranca",
+      "type": "string",
+      "maxLength": 8,
+      "format": "cep"
+    },
+    "FONECOB": {
+      "title": "Tel. cob.",
+      "description": "Telefone de cobranca",
+      "type": "string",
+      "maxLength": 20,
+      "format": "br-phone"
+    },
+    "ENDENT": {
+      "title": "Endereço entrega",
+      "description": "Endereco de entrega",
+      "type": "string",
+      "maxLength": 45
+    },
+    "NUMENT": {
+      "title": "Nº EndEnt",
+      "description": "Número do endereço de entrega",
+      "type": "string",
+      "maxLength": 6
+    },
+    "COMPENT": {
+      "title": "Compl. EndEnt",
+      "description": "Complemento do endereço de entrega",
+      "type": "string",
+      "maxLength": 22
+    },
+    "BAIRROENT": {
+      "title": "Bairro entrega",
+      "description": "Bairro de entrega",
+      "type": "string",
+      "maxLength": 30
+    },
+    "ONIBUSENT": {
+      "title": "Ônibus",
+      "description": "Ônibus para chegar ao local de entrega",
+      "type": "string",
+      "maxLength": 15
+    },
+    "REFENT": {
+      "title": "Refrência",
+      "description": "Referência do endereço de entrega",
+      "type": "string",
+      "maxLength": 50
+    },
+    "CIDADEENT": {
+      "title": "Cidade entrega",
+      "description": "Cidade de entrega",
+      "type": "string",
+      "maxLength": 30
+    },
+    "CEPENT": {
+      "title": "CEP ent.",
+      "description": "CEP de entrega",
+      "type": "string",
+      "maxLength": 8,
+      "format": "cep"
+    },
+    "FONEENT": {
+      "title": "Tel. ent.",
+      "description": "Telefone de entrega",
+      "type": "string",
+      "maxLength": 20,
+      "format": "br-phone"
+    },
+    "FORMREC": {
+      "title": "Forma",
+      "description": "Forma de recebimento",
+      "type": "string",
+      "maxLength": 1,
+      "enum": [
+        "Por compra",
+        "Semanal",
+        "Quinzenal",
+        "Mensal"
+      ],
+      "format": "select",
+      "defaultValue": "Por compra"
+    },
+    "NUMATRASO": {
+      "title": "Numatraso",
+      "description": "Número de atrasos",
+      "type": "integer",
+      "format": "fixed"
+    },
+    "NUMCOMPP": {
+      "title": "Numcompp",
+      "description": "Número de compras a prazo",
+      "type": "integer",
+      "format": "fixed"
+    },
+    "NUMCOMPV": {
+      "title": "Numcompv",
+      "description": "Número de compras a vista",
+      "type": "integer",
+      "format": "fixed"
+    },
+    "VALCOMPP": {
+      "title": "Valcompp",
+      "description": "Valor total das compras a prazo",
+      "type": "number",
+      "maxLength": 14,
+      "decimals": 4
+    },
+    "VALCOMPV": {
+      "title": "Valcompv",
+      "description": "Valor total das compras a vista",
+      "type": "number",
+      "maxLength": 14,
+      "decimals": 4
+    },
+    "VALMAIA": {
+      "title": "Valmaia",
+      "description": "Valor do maior atraso",
+      "type": "number",
+      "maxLength": 14,
+      "decimals": 4
+    },
+    "VALMAIC": {
+      "title": "Valmaic",
+      "description": "Valor da maior compra",
+      "type": "number",
+      "maxLength": 14,
+      "decimals": 4
+    },
+    "VALPRIC": {
+      "title": "Valpric",
+      "description": "Valor da primeira compra",
+      "type": "number",
+      "maxLength": 14,
+      "decimals": 4
+    },
+    "VALULTC": {
+      "title": "Valultc",
+      "description": "Valor da última compra",
+      "type": "number",
+      "maxLength": 14,
+      "decimals": 4
+    },
+    "CODCTA": {
+      "title": "Contabilização",
+      "description": "Contabilização",
+      "type": "string",
+      "maxLength": 100
+    },
+    "CODCTAAdiantamento": {
+      "title": "Contabilização do adiantamento",
+      "description": "Acontabilização do adiantamento",
+      "type": "string",
+      "maxLength": 100
+    },
+    "DATMAIA": {
+      "title": "Data >",
+      "description": "Data do maior atraso",
+      "type": "date",
+      "timezone": "ignore"
+    },
+    "DATMAIC": {
+      "title": "Data > comp.",
+      "description": "Data da maior compra",
+      "type": "date",
+      "timezone": "ignore"
+    },
+    "DATPRIC": {
+      "title": "Data prim.",
+      "description": "Data da primeira compra",
+      "type": "date",
+      "timezone": "ignore"
+    },
+    "DATULTC": {
+      "title": "Dt ult.",
+      "description": "Data da última compra",
+      "type": "date",
+      "timezone": "ignore"
+    },
+    "LIMCREDIT": {
+      "title": "Limite de crédito",
+      "description": "Valor limite de crédito",
+      "type": "number",
+      "format": "fixed",
+      "maxLength": 12,
+      "decimals": 2
+    },
+    "DESCONTO": {
+      "title": "Desconto",
+      "description": "Porcentual do desconto",
+      "type": "number",
+      "format": "fixed",
+      "maxLength": 12,
+      "decimals": 2
+    },
+    "DIACOB": {
+      "title": "Dia cob.",
+      "description": "Dia do mês para cobrança",
+      "type": "integer",
+      "format": "fixed"
+    },
+    "APLICACAO": {
+      "title": "Aplicacao",
+      "description": "Aplicacao do cliente quanto aos produtos adquiridos",
+      "type": "string",
+      "maxLength": 1,
+      "enum": [
+        "Consumo",
+        "Ativo Imobilizado",
+        "Revenda",
+        "Industrialização"
+      ],
+      "format": "select",
+      "defaultValue": "Consumo"
+    },
+    "DIASATRASO": {
+      "title": "Dia atraso",
+      "description": "Dias do maior atraso",
+      "type": "integer",
+      "format": "fixed"
+    },
+    "CONTATOCOB": {
+      "title": "ContatoCob",
+      "description": "Contato no endereço de cobrança",
+      "type": "string",
+      "maxLength": 40
+    },
+    "PorcAbatCredito": {
+      "title": "% abatimento de crédito",
+      "description": "Porcentual de abatimento sobre crédito",
+      "type": "number",
+      "format": "fixed",
+      "maxLength": 4,
+      "decimals": 1
+    },
+    "ANOTACOES": {
+      "title": "Anotações",
+      "description": "Anotações sobre o cliente",
+      "type": "string",
+      "format": "text"
+    },
+    "RetemISS": {
+      "title": "RetemIss",
+      "description": "Indica se o cliente retem o ISS da empresa",
+      "type": "string",
+      "maxLength": 1,
+      "enum": [
+        "Não",
+        "Sim"
+      ],
+      "format": "checkbox",
+      "defaultValue": "Não"
+    },
+    "Contabilizar Provisão": {
+      "description": "Indica se deve-se contabilizar a provisão",
+      "type": "string",
+      "maxLength": 1,
+      "enum": [
+        "Sim",
+        "Não"
+      ],
+      "format": "checkbox",
+      "defaultValue": "Sim"
+    },
+    "RetentorCSLL_COFINS_PIS": {
+      "description": "Indica se o cliente é retentor da CSLL, COFINS e PIS na fonte",
+      "type": "string",
+      "maxLength": 1,
+      "enum": [
+        "Sim",
+        "Não"
+      ],
+      "format": "checkbox",
+      "defaultValue": "Sim"
+    },
+    "RetentorCSLL": {
+      "description": "Indica se o cliente é retentor da CSLL",
+      "type": "string",
+      "maxLength": 1,
+      "enum": [
+        "Sim",
+        "Não"
+      ],
+      "format": "checkbox",
+      "defaultValue": "Sim"
+    },
+    "RetentorCOFINS": {
+      "description": "Indica se o cliente é retentor da COFINS",
+      "type": "string",
+      "maxLength": 1,
+      "enum": [
+        "Sim",
+        "Não"
+      ],
+      "format": "checkbox",
+      "defaultValue": "Sim"
+    },
+    "RetentorPIS": {
+      "description": "Indica se o cliente é retentor do PIS",
+      "type": "string",
+      "maxLength": 1,
+      "enum": [
+        "Sim",
+        "Não"
+      ],
+      "format": "checkbox",
+      "defaultValue": "Sim"
+    },
+    "Instalação2ANP": {
+      "description": "Código ANP da Instalação 2 - DPMP",
+      "type": "integer",
+      "format": "fixed"
+    },
+    "OperaçãoANP": {
+      "description": "Código de operação ANP",
+      "type": "string",
+      "maxLength": 7
+    },
+    "CódigoANPMunicípio": {
+      "description": "Código ANP do município (para clientes NÃO REGULADOS)",
+      "type": "string",
+      "maxLength": 7
+    },
+    "CódigoANPAtividadeEcon": {
+      "description": "Código ANP da atividade econômica (para cliente NÃO REGULADO)",
+      "type": "string",
+      "maxLength": 5
+    },
+    "ContribuinteIPI": {
+      "description": "Indica se o cliente é ou não contribuinte do IPI",
+      "type": "string",
+      "maxLength": 1,
+      "enum": [
+        "Sim",
+        "Não"
+      ],
+      "format": "checkbox",
+      "defaultValue": "Sim"
+    },
+    "CSTIPI": {
+      "description": "CST do IPI caso o cliente NÃO seja contribuinte do IPI",
+      "type": "string",
+      "maxLength": 2,
+      "enum": [
+        "  -Indefinido",
+        "52-Saída isenta",
+        "53-Saída não-tributada",
+        "54-Saída imune",
+        "55-Saída com suspensão"
+      ],
+      "format": "select",
+      "defaultValue": "  -Indefinido"
+    },
+    "RetemPISCOFINS": {
+      "description": "Indica se o clienter está sujeito ao débito do PIS/COFINS",
+      "type": "string",
+      "maxLength": 1,
+      "enum": [
+        "Sim",
+        "Não"
+      ],
+      "format": "checkbox",
+      "defaultValue": "Sim"
+    },
+    "CSTPISCOFINS": {
+      "description": "CST do PIS/COFINS caso o cliente NÃO esteja sujeito ao débito do PIS/COFINS",
+      "type": "string",
+      "maxLength": 2,
+      "enum": [
+        "  -Indefinido",
+        "04-Op.Trib. Monofásica - Revenda a Alíquota Zero",
+        "06-Op.Trib. a Alíquota Zero",
+        "07-Operação Isenta da Contribuição",
+        "08-Operação Sem Incidência da Contribuição",
+        "09-Operação com Suspensão da Contribuição"
+      ],
+      "format": "select",
+      "defaultValue": "  -Indefinido"
+    },
+    "COMISSAO": {
+      "description": "Percentual de comissão específico do cliente",
+      "type": "number",
+      "format": "fixed",
+      "maxLength": 12,
+      "decimals": 2
+    },
+    "ObservaçãoPadrão": {
+      "description": "Observação padrão para os lançamentos do cliente",
+      "type": "string",
+      "format": "text"
+    },
+    "InformaGTINNFe": {
+      "description": "Indica se informa ou não o GTIN na NFe",
+      "type": "string",
+      "maxLength": 1,
+      "enum": [
+        "Sim",
+        "Não"
+      ],
+      "format": "checkbox",
+      "defaultValue": "Sim"
+    },
+    "ExceçãoClientesEmAtraso": {
+      "description": "Indica se o cliente é exceção no controle de clientes em atraso",
+      "type": "string",
+      "maxLength": 1,
+      "enum": [
+        "Não",
+        "Sim"
+      ],
+      "format": "checkbox",
+      "defaultValue": "Não"
+    }
+  }
+}
