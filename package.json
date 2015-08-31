@@ -45,7 +45,6 @@
   "license": "MIT",
   "dependencies": {
     "debug": "^2.2.0",
-    "lodash": "^3.10.1",
-    "underscore.string": "^3.2.0"
+    "lodash": "^3.10.1"
   }
 }

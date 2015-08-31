@@ -1,7 +1,6 @@
 // Adapted from https://github.com/cnect/sails-sqlserver/blob/master/lib/sql.js
 
 var _ = require('lodash');
-_.str = require('underscore.string');
 
 var sql = {
 
@@ -50,14 +49,14 @@ var sql = {
 
   // Create a value csv for a DQL query
   // key => optional, overrides the keys in the dictionary
-  values: function(collectionName, values, key) {
-    return sql.build(collectionName, values, sql.prepareValue, ', ', key);
+  values: function(values, key) {
+    return sql.build(values, sql.prepareValue, ', ', key);
   },
 
-  prepareCriterion: function(collectionName, value, key, parentKey) {
+  prepareCriterion: function(value, key, parentKey) {
 
     if (validSubAttrCriteria(value)) {
-      return sql.where(collectionName, value, null, key);
+      return sql.where(value, null, key);
     }
 
     // Build escaped attr and value strings using either the key,
@@ -69,7 +68,7 @@ var sql = {
     if (parentKey) {
 
       attrStr = sql.wrap(parentKey);
-      valueStr = sql.prepareValue(collectionName, value, parentKey);
+      valueStr = sql.prepareValue(value, parentKey);
 
       // Why don't we strip you out of those bothersome apostrophes?
       var nakedButClean = _.str.trim(valueStr, '\'');
@@ -82,7 +81,7 @@ var sql = {
         if (value === null) return attrStr + ' IS NOT NULL';
         else if (_.isArray(value)) {
           //return attrStr + ' NOT IN (' + valueStr.split(',') + ')';
-          return attrStr + ' NOT IN (' + sql.values(collectionName, value, key) + ')';
+          return attrStr + ' NOT IN (' + sql.values(value, key) + ')';
         }
         else return attrStr + '<>' + valueStr;
       }
@@ -93,14 +92,14 @@ var sql = {
       else throw new Error('Unknown comparator: ' + key);
     } else {
       attrStr = sql.wrap(key);
-      valueStr = sql.prepareValue(collectionName, value, key);
+      valueStr = sql.prepareValue(value, key);
       if (_.isNull(value)) {
         return attrStr + ' IS NULL';
       } else return attrStr + '=' + valueStr;
     }
   },
 
-  prepareValue: function(collectionName, value, attrName) {
+  prepareValue: function(value) {
     // Cast dates to SQL
     if (_.isDate(value)) {
       if (sql.dialect === 'mssql') {
@@ -121,37 +120,37 @@ var sql = {
 
   // Starting point for predicate evaluation
   // parentKey => if set, look for comparators and apply them to the parent key
-  where: function(collectionName, where, key, parentKey) {
-    return sql.build('collectionName', where, sql.predicate, ' AND ', undefined, parentKey);
+  where: function(where, key, parentKey) {
+    return sql.build(where, sql.predicate, ' AND ', undefined, parentKey);
   },
 
   // Recursively parse a predicate calculus and build a SQL query
-  predicate: function(collectionName, criterion, key, parentKey) {
+  predicate: function(criterion, key, parentKey) {
 
     var queryPart = '';
 
     if (parentKey) {
-      return sql.prepareCriterion(collectionName, criterion, key, parentKey);
+      return sql.prepareCriterion(criterion, key, parentKey);
     }
 
     // OR
     if (key.toLowerCase() === 'or') {
-      queryPart = sql.build(collectionName, criterion, sql.where, ' OR ');
+      queryPart = sql.build(criterion, sql.where, ' OR ');
       return ' ( ' + queryPart + ' ) ';
     } else if (key.toLowerCase() === 'and') { // AND
-      queryPart = sql.build(collectionName, criterion, sql.where, ' AND ');
+      queryPart = sql.build(criterion, sql.where, ' AND ');
       return ' ( ' + queryPart + ' ) ';
     } else if (_.isArray(criterion)) { // IN
-      var values = sql.values(collectionName, criterion, key) || 'NULL';
+      var values = sql.values(criterion, key) || 'NULL';
       queryPart = sql.wrap(key) + ' IN (' + values + ')';
       return queryPart;
     } else if (key.toLowerCase() === 'like') { // LIKE
-      return sql.build(collectionName, criterion, function(collectionName, value, attrName) {
+      return sql.build(criterion, function(value, attrName) {
         var attrStr = sql.wrap(attrName);
         if (_.isRegExp(value)) {
           throw new Error('RegExp not supported');
         }
-        var valueStr = sql.prepareValue(collectionName, value, attrName);
+        var valueStr = sql.prepareValue(value, attrName);
         // Handle escaped percent (%) signs [encoded as %%%]
         valueStr = valueStr.replace(/%%%/g, '\\%');
 
@@ -160,18 +159,18 @@ var sql = {
     } else if (key.toLowerCase() === 'not') { // NOT
       throw new Error('NOT not supported yet!');
     } else { // Basic criteria item
-      return sql.prepareCriterion(collectionName, criterion, key);
+      return sql.prepareCriterion(criterion, key);
     }
 
   },
 
-  build: function(collectionName, collection, fn, separator, keyOverride, parentKey) {
+  build: function(collection, fn, separator, keyOverride, parentKey) {
 
     separator = separator || ', ';
     var $sql = '';
 
     _.each(collection, function(value, key) {
-      $sql += fn(collectionName, value, keyOverride || key, parentKey);
+      $sql += fn(value, keyOverride || key, parentKey);
 
       // (always append separator)
       $sql += separator;
