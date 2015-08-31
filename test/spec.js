@@ -16,6 +16,8 @@ module.exports = function(options) {
   var db;
   var cadAtivo;
   var numberOfRecordsToGenerate = 100;
+  var nextDay = new Date();
+  var datesSaved = [];
   before(function(done) {
     db = options.db;
     view = sqlView(db.dialect);
@@ -27,12 +29,17 @@ module.exports = function(options) {
       var order = i++;
       var group = order % 10;
       promise = promise.then(function() {
+        nextDay.setDate(nextDay.getDate() + 1);
+        datesSaved.push(new Date(nextDay));
         return cadAtivo
           .create({
             NOMECAD: _.padLeft(String(order), 3, '00'),
             NUMERO: 'QRYTST',
             ENDERECO: '' + group,
             VALORLCTO: 10.01,
+            DATNASC: nextDay,
+            DATNASCZ: nextDay,
+            DATNASCNOZ: nextDay,
             fornecedor: {
               SIGLAFOR: 'query test',
               NUMERO: '99',
@@ -250,5 +257,212 @@ module.exports = function(options) {
         })
         .catch(done);
     });
+    it('should read 10 records using and', function(done) {
+      db
+        .query(view.build('SELECT * FROM ' + db.wrap('CADASTRO'), {
+          where: {
+            NUMERO: 'QRYTST',
+            ENDERECO: '0'
+          }
+        }))
+        .then(function(recordset) {
+          expect(recordset).to.be.a('array');
+          expect(recordset.length).to.equal(10);
+          done();
+        })
+        .catch(done);
+    });
+    it('should read 10 records using contains', function(done) {
+      db
+        .query(view.build('SELECT * FROM ' + db.wrap('CADASTRO'), {
+          where: {
+            NUMERO: {
+              contains: 'QRY'
+            },
+            ENDERECO: '0'
+          }
+        }))
+        .then(function(recordset) {
+          expect(recordset).to.be.a('array');
+          expect(recordset.length).to.equal(10);
+          done();
+        })
+        .catch(done);
+    });
+    it('should read 20 records using or in a array', function(done) {
+      db
+        .query(view.build('SELECT * FROM ' + db.wrap('CADASTRO'), {
+          where: {
+            NUMERO: {
+              contains: 'QRY'
+            },
+            ENDERECO: ['0', '1']
+          }
+        }))
+        .then(function(recordset) {
+          expect(recordset).to.be.a('array');
+          expect(recordset.length).to.equal(20);
+          done();
+        })
+        .catch(done);
+    });
+    it('should read 80 records using or in a negate array', function(done) {
+      db
+        .query(view.build('SELECT * FROM ' + db.wrap('CADASTRO'), {
+          where: {
+            NUMERO: {
+              contains: 'QRY'
+            },
+            ENDERECO: {'!': ['0', '1']}
+          }
+        }))
+        .then(function(recordset) {
+          expect(recordset).to.be.a('array');
+          expect(recordset.length).to.equal(80);
+          done();
+        })
+        .catch(done);
+    });
+    it('should read 10 records using <', function(done) {
+      db
+        .query(view.build('SELECT * FROM ' + db.wrap('CADASTRO'), {
+          where: {
+            NUMERO: {
+              contains: 'QRY'
+            },
+            ENDERECO: {'<': '1'}
+          }
+        }))
+        .then(function(recordset) {
+          expect(recordset).to.be.a('array');
+          expect(recordset.length).to.equal(10);
+          done();
+        })
+        .catch(done);
+    });
+    it('should read 20 records using <=', function(done) {
+      db
+        .query(view.build('SELECT * FROM ' + db.wrap('CADASTRO'), {
+          where: {
+            NUMERO: {
+              contains: 'QRY'
+            },
+            ENDERECO: {'<=': '1'}
+          }
+        }))
+        .then(function(recordset) {
+          expect(recordset).to.be.a('array');
+          expect(recordset.length).to.equal(20);
+          done();
+        })
+        .catch(done);
+    });
+    it('should read only one field and 9 records using startsWith', function(done) {
+      db
+        .query(view.build('SELECT * FROM ' + db.wrap('CADASTRO'), {
+          where: {
+            NOMECAD: {
+              startsWith: '00'
+            }
+          },
+          select: 'NOMECAD'
+        }))
+        .then(function(recordset) {
+          expect(recordset).to.be.a('array');
+          expect(recordset.length).to.equal(9);
+          expect(Object.keys(recordset[0]).length).to.equal(1);
+          expect(recordset[0].NOMECAD).to.be.a('string');
+          done();
+        })
+        .catch(done);
+    });
   });
+
+  describe('querying date and time', function() {
+    it('should read 1 record in a date column', function(done) {
+      db
+        .query(view.build('SELECT * FROM ' + db.wrap('CADASTRO'), {
+          where: {
+            DATNASC: datesSaved[0]
+          }
+        }))
+        .then(function(recordset) {
+          expect(recordset).to.be.a('array');
+          expect(recordset.length).to.equal(1);
+          done();
+        })
+        .catch(done);
+    });
+    it('should read 10 records in a date column', function(done) {
+      db
+        .query(view.build('SELECT * FROM ' + db.wrap('CADASTRO'), {
+          where: {
+            DATNASC: {'<=': datesSaved[9]}
+          }
+        }))
+        .then(function(recordset) {
+          expect(recordset).to.be.a('array');
+          expect(recordset.length).to.equal(10);
+          done();
+        })
+        .catch(done);
+    });
+    it('should read 1 record in a datetime column with timezone', function(done) {
+      db
+        .query(view.build('SELECT * FROM ' + db.wrap('CADASTRO'), {
+          where: {
+            DATNASCZ: datesSaved[0]
+          }
+        }))
+        .then(function(recordset) {
+          expect(recordset).to.be.a('array');
+          expect(recordset.length).to.equal(1);
+          done();
+        })
+        .catch(done);
+    });
+    it('should read 10 records in a datetime column with timezone', function(done) {
+      db
+        .query(view.build('SELECT * FROM ' + db.wrap('CADASTRO'), {
+          where: {
+            DATNASCZ: {'<=': datesSaved[9]}
+          }
+        }))
+        .then(function(recordset) {
+          expect(recordset).to.be.a('array');
+          expect(recordset.length).to.equal(10);
+          done();
+        })
+        .catch(done);
+    });
+    //it('should read 1 record in a datetime column without timezone', function(done) {
+    //  db
+    //    .query(view.build('SELECT * FROM ' + db.wrap('CADASTRO'), {
+    //      where: {
+    //        DATNASCNOZ: datesSaved[0]
+    //      }
+    //    }))
+    //    .then(function(recordset) {
+    //      expect(recordset).to.be.a('array');
+    //      expect(recordset.length).to.equal(1);
+    //      done();
+    //    })
+    //    .catch(done);
+    //});
+    it('should read 10 records in a datetime column without timezone', function(done) {
+      db
+        .query(view.build('SELECT * FROM ' + db.wrap('CADASTRO'), {
+          where: {
+            DATNASCNOZ: {'<=': datesSaved[9]}
+          }
+        }))
+        .then(function(recordset) {
+          expect(recordset).to.be.a('array');
+          expect(recordset.length).to.equal(10);
+          done();
+        })
+        .catch(done);
+    });
+  });
+
 };
