@@ -15,7 +15,7 @@ module.exports = function(dialect) {
       var statement = build(view, criteria);
       debug(dialect, statement);
       return {
-        query: statement,
+        statement: statement,
         params: sql.params
       };
     }
