@@ -1,5 +1,6 @@
 # sql-view [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Dependency Status][daviddm-image]][daviddm-url] [![Coverage percentage][coveralls-image]][coveralls-url]
-> Rewrite a select statement from a view or table to filter, group or paginate using an otions object
+> Rewrite a select statement embedding a filter, sort, group or pagination using an otions object.
+ For MS Sql Server and postgres
 
 
 ## Install
@@ -14,7 +15,6 @@ $ npm install --save sql-view
 ```js
 var sqlView = require('sql-view');
 
-sqlView('Rainbow');
 ```
 
 ## License

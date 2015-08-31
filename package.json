@@ -1,7 +1,7 @@
 {
   "name": "sql-view",
   "version": "0.0.0",
-  "description": "Rewrite a select statement from a view or table to filter, group or paginate using an otions object",
+  "description": "Rewrite a select statement embedding a filter, sort, group or pagination using an otions object",
   "homepage": "",
   "repository": "andrglo/sql-view",
   "author": {
