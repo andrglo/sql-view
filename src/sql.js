@@ -74,11 +74,11 @@ var sql = {
       // Why don't we strip you out of those bothersome apostrophes?
       var nakedButClean = _.str.trim(valueStr, '\'');
 
-      if (key === '<' || key === 'lessThan') return attrStr + '<' + valueStr;
-      else if (key === '<=' || key === 'lessThanOrEqual') return attrStr + '<=' + valueStr;
-      else if (key === '>' || key === 'greaterThan') return attrStr + '>' + valueStr;
-      else if (key === '>=' || key === 'greaterThanOrEqual') return attrStr + '>=' + valueStr;
-      else if (key === '!' || key === 'not') {
+      if (key === 'lt') return attrStr + '<' + valueStr;
+      else if (key === 'lte') return attrStr + '<=' + valueStr;
+      else if (key === 'gt') return attrStr + '>' + valueStr;
+      else if (key === 'gte') return attrStr + '>=' + valueStr;
+      else if (key === 'not') {
         if (value === null) return attrStr + ' IS NOT NULL';
         else if (_.isArray(value)) {
           //return attrStr + ' NOT IN (' + valueStr.split(',') + ')';
@@ -165,7 +165,6 @@ var sql = {
 
   },
 
-
   build: function(collectionName, collection, fn, separator, keyOverride, parentKey) {
 
     separator = separator || ', ';
@@ -191,13 +190,20 @@ function toSqlDate(date) {
     ('00' + date.getUTCMinutes()).slice(-2) + ':' +
     ('00' + date.getUTCSeconds()).slice(-2) + '.' +
     ('00' + date.getUTCMilliseconds()).slice(-3);
-
   return date;
 }
 
 function validSubAttrCriteria(c) {
-  return _.isObject(c) && (
-    !_.isUndefined(c.not) || !_.isUndefined(c.greaterThan) || !_.isUndefined(c.lessThan) || !_.isUndefined(c.greaterThanOrEqual) || !_.isUndefined(c.lessThanOrEqual) || !_.isUndefined(c['<']) || !_.isUndefined(c['<=']) || !_.isUndefined(c['!']) || !_.isUndefined(c['>']) || !_.isUndefined(c['>=']) || !_.isUndefined(c.startsWith) || !_.isUndefined(c.endsWith) || !_.isUndefined(c.contains) || !_.isUndefined(c.like));
+  return _.isObject(c)
+    && (!_.isUndefined(c.not)
+    || !_.isUndefined(c.gt)
+    || !_.isUndefined(c.lt)
+    || !_.isUndefined(c.gte)
+    || !_.isUndefined(c.lte)
+    || !_.isUndefined(c.startsWith)
+    || !_.isUndefined(c.endsWith)
+    || !_.isUndefined(c.contains)
+    || !_.isUndefined(c.like));
 }
 
 module.exports = sql;

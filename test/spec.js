@@ -313,7 +313,7 @@ module.exports = function(options) {
             NUMERO: {
               contains: 'QRY'
             },
-            ENDERECO: {'!': ['0', '1']}
+            ENDERECO: {not: ['0', '1']}
           }
         }))
         .then(function(recordset) {
@@ -330,7 +330,7 @@ module.exports = function(options) {
             NUMERO: {
               contains: 'QRY'
             },
-            ENDERECO: {'<': '1'}
+            ENDERECO: {lt: '1'}
           }
         }))
         .then(function(recordset) {
@@ -347,7 +347,7 @@ module.exports = function(options) {
             NUMERO: {
               contains: 'QRY'
             },
-            ENDERECO: {'<=': '1'}
+            ENDERECO: {lte: '1'}
           }
         }))
         .then(function(recordset) {
@@ -397,7 +397,7 @@ module.exports = function(options) {
       db
         .query(view.build('SELECT * FROM ' + db.wrap('CADASTRO'), {
           where: {
-            DATNASC: {'<=': datesSaved[9]}
+            DATNASC: {lte: datesSaved[9]}
           }
         }))
         .then(function(recordset) {
@@ -425,7 +425,7 @@ module.exports = function(options) {
       db
         .query(view.build('SELECT * FROM ' + db.wrap('CADASTRO'), {
           where: {
-            DATNASCZ: {'<=': datesSaved[9]}
+            DATNASCZ: {lte: datesSaved[9]}
           }
         }))
         .then(function(recordset) {
@@ -453,7 +453,7 @@ module.exports = function(options) {
       db
         .query(view.build('SELECT * FROM ' + db.wrap('CADASTRO'), {
           where: {
-            DATNASCNOZ: {'<=': datesSaved[9]}
+            DATNASCNOZ: {lte: datesSaved[9]}
           }
         }))
         .then(function(recordset) {
