@@ -26,6 +26,11 @@ function build(view, criteria) {
   var orderBy = [];
   var where = criteria.where ? sql.where('', criteria.where) : void 0;
 
+  _.forEach(sql.toArray(criteria.select), function(column) {
+    var info = splitAlias(column);
+    columns.push(info.column + ' AS ' + info.as);
+  });
+
   _.forEach(sql.toArray(criteria.groupBy), function(column) {
     var info = splitAlias(column);
     columns.push(info.column + ' AS ' + info.as);
