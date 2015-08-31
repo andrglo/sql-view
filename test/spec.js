@@ -202,7 +202,7 @@ module.exports = function(options) {
           groupBy: 'ENDERECO',
           limit: 3,
           skip: 3,
-          order: ['ENDERECO DESC']
+          order: 'ENDERECO DESC'
         }))
         .then(function(recordset) {
           expect(recordset).to.be.a('array');

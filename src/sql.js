@@ -122,7 +122,7 @@ var sql = {
   // Starting point for predicate evaluation
   // parentKey => if set, look for comparators and apply them to the parent key
   where: function(collectionName, where, key, parentKey) {
-    return sql.build(collectionName, where, sql.predicate, ' AND ', undefined, parentKey);
+    return sql.build('collectionName', where, sql.predicate, ' AND ', undefined, parentKey);
   },
 
   // Recursively parse a predicate calculus and build a SQL query

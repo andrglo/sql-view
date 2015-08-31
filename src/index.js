@@ -52,7 +52,7 @@ function build(view, criteria) {
     columns.push('MIN(' + info.column + ') AS ' + info.as);
   });
 
-  _.forEach(criteria.order, function(column) {
+  _.forEach(sql.toArray(criteria.order), function(column) {
     var direction;
     if (column.substr(column.length - 4).toUpperCase() === ' ASC') {
       direction = 'ASC';
@@ -94,7 +94,7 @@ function build(view, criteria) {
         statement += ' ORDER BY ' + orderBy.join();
       }
       if (criteria.limit) {
-        statement = statement.replace('SELECT ', 'SELECT TOP ' + criteria.limit);
+        statement = statement.replace('SELECT ', 'SELECT TOP ' + criteria.limit + ' ');
       }
     }
   }
