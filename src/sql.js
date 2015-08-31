@@ -18,35 +18,6 @@ var sql = {
     }
   },
 
-  escape: function(val, stringifyObjects, timeZone) {
-
-    if (val === undefined || val === null) {
-      return 'NULL';
-    }
-
-    switch (typeof val) {
-      case 'boolean':
-        return (val) ? '1' : '0';
-      case 'number':
-        return val + '';
-    }
-
-    if (typeof val === 'object') {
-      val = val.toString();
-    }
-
-    val = val.replace(/[\']/g, function(s) {
-      switch (s) {
-        case '\'':
-          return '\'\'';
-        default:
-          return ' ';
-      }
-    });
-
-    return '\'' + val + '\'';
-  },
-
   // Create a value csv for a DQL query
   // key => optional, overrides the keys in the dictionary
   values: function(values, key) {
@@ -100,22 +71,8 @@ var sql = {
   },
 
   prepareValue: function(value) {
-    // Cast dates to SQL
-    if (_.isDate(value)) {
-      if (sql.dialect === 'mssql') {
-        value = toSqlDate(value);
-      } else {
-        value = value.toISOString();
-      }
-    }
-
-    // Cast functions to strings
-    if (_.isFunction(value)) {
-      value = value.toString();
-    }
-
-    // Escape (also wraps in quotes)
-    return sql.escape(value);
+    sql.params.push(value);
+    return '$' + sql.params.length;
   },
 
   // Starting point for predicate evaluation
@@ -165,32 +122,16 @@ var sql = {
   },
 
   build: function(collection, fn, separator, keyOverride, parentKey) {
-
     separator = separator || ', ';
-    var $sql = '';
-
+    var where = '';
     _.each(collection, function(value, key) {
-      $sql += fn(value, keyOverride || key, parentKey);
-
-      // (always append separator)
-      $sql += separator;
+      where += fn(value, keyOverride || key, parentKey);
+      where += separator;
     });
-
-    return _.str.rtrim($sql, separator);
+    return _.str.rtrim(where, separator);
   }
 
 };
-
-function toSqlDate(date) {
-  date = date.getUTCFullYear() + '-' +
-    ('00' + (date.getUTCMonth() + 1)).slice(-2) + '-' +
-    ('00' + date.getUTCDate()).slice(-2) + ' ' +
-    ('00' + date.getUTCHours()).slice(-2) + ':' +
-    ('00' + date.getUTCMinutes()).slice(-2) + ':' +
-    ('00' + date.getUTCSeconds()).slice(-2) + '.' +
-    ('00' + date.getUTCMilliseconds()).slice(-3);
-  return date;
-}
 
 function validSubAttrCriteria(c) {
   return _.isObject(c)

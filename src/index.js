@@ -11,9 +11,13 @@ module.exports = function(dialect) {
     build: function(view, criteria) {
       criteria = criteria || {};
       sql.dialect = dialect;
+      sql.params = [];
       var statement = build(view, criteria);
       debug(dialect, statement);
-      return statement;
+      return {
+        query: statement,
+        params: sql.params
+      };
     }
   };
 
