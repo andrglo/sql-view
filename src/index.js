@@ -1,185 +1,116 @@
 // Adapted from https://github.com/cnect/sails-sqlserver/blob/master/lib/sql.js
 
 var _ = require('lodash');
+var debug = require('debug')('sql-view');
+var assert = require('assert');
 var sql = require('./sql');
 
-module.exports = function(query, criteria, dialect) {
-  var statement = buildSelectStatement(query, criteria, dialect);
-  statement += serializeOptions(query, criteria, dialect);
-  if (criteria.skip) {
-    if (dialect === 'postgres') {
-      var pos = statement.indexOf(' * FROM (');
-      statement = 'SELECT' + statement.substr(pos) +
-        ' LIMIT ' + criteria.limit + ' OFFSET ' + criteria.skip;
-    } else {
-      var outerOffsetQuery = 'SELECT ';
-      if (criteria.limit) {
-        outerOffsetQuery += 'TOP ' + criteria.limit + ' ';
-      }
-      outerOffsetQuery += '* FROM (' + statement + ') __outeroffset__ ' +
-        'WHERE __outeroffset__.__rownum__ > ' + criteria.skip + ' ';
-      statement = outerOffsetQuery;
+module.exports = function(dialect) {
+
+  return {
+    build: function(view, criteria) {
+      criteria = criteria || {};
+      sql.dialect = dialect;
+      var statement = build(view, criteria);
+      debug(dialect, statement);
+      return statement;
     }
-  }
-  return statement;
+  };
+
 };
 
-function buildSelectStatement(query, criteria) {
+function build(view, criteria) {
 
-  var statement = 'SELECT ';
+  var columns = [];
+  var groupBy = [];
+  var orderBy = [];
+  var where = criteria.where ? sql.where('', criteria.where) : void 0;
 
-  if (criteria.groupBy || criteria.sum || criteria.average || criteria.min || criteria.max) {
-
-    // Append groupBy columns to select statement
-    if (criteria.groupBy) {
-      if (criteria.groupBy instanceof Array) {
-        criteria.groupBy.forEach(function(opt) {
-          statement += '[' + opt + '], ';
-        });
-      } else {
-        statement += '[' + criteria.groupBy + '], ';
-      }
-    }
-
-    // Handle SUM
-    if (criteria.sum) {
-      if (criteria.sum instanceof Array) {
-        criteria.sum.forEach(function(opt) {
-          statement += 'SUM([' + opt + ']) AS [' + opt + '], ';
-        });
-      } else {
-        statement += 'SUM([' + criteria.sum + ']) AS [' + criteria.sum + '], ';
-      }
-    }
-
-    // Handle AVG (casting to float to fix percision with trailing zeros)
-    if (criteria.average) {
-      if (criteria.average instanceof Array) {
-        criteria.average.forEach(function(opt) {
-          statement += 'AVG(CAST([' + opt + '] AS FLOAT)) AS [' + opt + '], ';
-        });
-      } else {
-        statement += 'AVG(CAST([' + criteria.average + '] AS FLOAT)) AS [' + criteria.average + '], ';
-      }
-    }
-
-    // Handle MAX
-    if (criteria.max) {
-      if (criteria.max instanceof Array) {
-        criteria.max.forEach(function(opt) {
-          statement += 'MAX([' + opt + ']) AS [' + opt + '], ';
-        });
-      } else {
-        statement += 'MAX([' + criteria.max + ']) AS [' + criteria.max + '], ';
-      }
-    }
-
-    // Handle MIN
-    if (criteria.min) {
-      if (criteria.min instanceof Array) {
-        criteria.min.forEach(function(opt) {
-          statement += 'MIN([' + opt + ']) AS [' + opt + '], ';
-        });
-      } else {
-        statement += 'MIN([' + criteria.min + ']) AS [' + criteria.min + '], ';
-      }
-    }
-
-    // trim trailing comma
-    statement = statement.slice(0, -2) + ' ';
-
-    // Add FROM clause
-    statement += 'FROM (' + query + ') t ';
-    return statement;
-  }
-
-  //HANDLE SKIP
-  if (criteria.skip) {
-    statement += 'ROW_NUMBER() OVER (' +
-      buildOrderByStatement(criteria) +
-      ') AS \'__rownum__\', ';
-  } else if (criteria.limit) {
-    // SQL Server implementation of LIMIT
-    statement += 'TOP ' + criteria.limit + ' ';
-  }
-
-  statement += '* FROM (' + query + ') t ';
-  return statement;
-
-}
-
-function buildOrderByStatement(criteria) {
-
-  var queryPart = 'ORDER BY ';
-
-  // Sort through each sort attribute criteria
-  _.each(criteria.sort, function(attrName) {
-
-    var direction = '';
-    if (attrName.substr(attrName.length - 4).toUpperCase() === ' ASC') {
-      direction = 'ASC, ';
-      attrName = attrName.substr(0, attrName.length - 4);
-    } else if (attrName.substr(attrName.length - 5).toUpperCase() === ' DESC') {
-      direction = 'DESC, ';
-      attrName = attrName.substr(0, attrName.length - 5);
-    }
-    queryPart += '[' + attrName + '] ' + direction;
+  _.forEach(sql.toArray(criteria.groupBy), function(column) {
+    var info = splitAlias(column);
+    columns.push(info.column + ' AS ' + info.as);
+    groupBy.push(info.column);
   });
 
-  // Remove trailing comma
-  if (queryPart.slice(-2) === ', ') {
-    queryPart = queryPart.slice(0, -2) + ' ';
+  _.forEach(sql.toArray(criteria.sum), function(column) {
+    var info = splitAlias(column);
+    columns.push('SUM(' + info.column + ') AS ' + info.as);
+  });
+
+  _.forEach(sql.toArray(criteria.avg), function(column) {
+    var info = splitAlias(column);
+    columns.push('AVG(' + info.column + ') AS ' + info.as);
+  });
+
+  _.forEach(sql.toArray(criteria.max), function(column) {
+    var info = splitAlias(column);
+    columns.push('MAX(' + info.column + ') AS ' + info.as);
+  });
+
+  _.forEach(sql.toArray(criteria.min), function(column) {
+    var info = splitAlias(column);
+    columns.push('MIN(' + info.column + ') AS ' + info.as);
+  });
+
+  _.forEach(criteria.order, function(column) {
+    var direction;
+    if (column.substr(column.length - 4).toUpperCase() === ' ASC') {
+      direction = 'ASC';
+      column = column.substr(0, column.length - 4);
+    } else if (column.substr(column.length - 5).toUpperCase() === ' DESC') {
+      direction = 'DESC';
+      column = column.substr(0, column.length - 5);
+    }
+    orderBy.push(sql.wrap(column) + (direction ? ' ' + direction : ''));
+  });
+
+  var statement = 'SELECT ' +
+    (columns.length ? columns.join() : '*') +
+    ' FROM (' + view + ') t' +
+    (where ? ' WHERE ' + where : '') +
+    (groupBy.length ? ' GROUP BY ' + groupBy.join() : '');
+
+  if (sql.dialect === 'postgres') {
+    if (orderBy.length) {
+      statement += ' ORDER BY ' + orderBy.join();
+    }
+    if (criteria.limit) {
+      statement += ' LIMIT ' + criteria.limit;
+    }
+    if (criteria.skip) {
+      assert(criteria.order, 'Order should be defined when using skip');
+      statement += ' OFFSET ' + criteria.skip;
+    }
+  } else { // msssql
+    if (criteria.skip) {
+      assert(criteria.order, 'Order should be defined when using skip');
+      statement = 'SELECT' +
+        (criteria.limit ? ' TOP ' + criteria.limit : '') +
+        ' * FROM (SELECT ROW_NUMBER() OVER (ORDER BY ' + orderBy.join() +
+        ') AS row_number,* FROM (' + statement + ') t) t ' +
+        'WHERE row_number > ' + criteria.skip;
+    } else {
+      if (orderBy.length) {
+        statement += ' ORDER BY ' + orderBy.join();
+      }
+      if (criteria.limit) {
+        statement = statement.replace('SELECT ', 'SELECT TOP ' + criteria.limit);
+      }
+    }
   }
-  return queryPart;
+  return statement;
 }
 
-function serializeOptions(query, options, dialect) {
-
-  var queryPart = '';
-
-  sql.dialect = dialect;
-  if (options.where) {
-    queryPart += 'WHERE ' + sql.where(query, options.where) + ' ';
+function splitAlias(name) {
+  var res = {};
+  var re = /^(.+) as (.+)$/i;
+  var match = re.exec(name);
+  if (match) {
+    res.column = sql.wrap(match[1]);
+    res.as = sql.wrap(match[2]);
+  } else {
+    res.column = sql.wrap(name);
+    res.as = res.column;
   }
-
-  if (options.groupBy) {
-    queryPart += 'GROUP BY ';
-
-    // Normalize to array
-    if (!Array.isArray(options.groupBy)) {
-      options.groupBy = [options.groupBy];
-    }
-    options.groupBy.forEach(function(key) {
-      queryPart += key + ', ';
-    });
-
-    // Remove trailing comma
-    queryPart = queryPart.slice(0, -2) + ' ';
-  }
-
-  //options are sorted during skip when applicable
-  if (options.sort && !options.skip) {
-    queryPart += 'ORDER BY ';
-
-    // Sort through each sort attribute criteria
-    _.each(options.sort, function(attrName) {
-
-      var direction = '';
-      if (attrName.substr(attrName.length - 4).toUpperCase() === ' ASC') {
-        direction = 'ASC, ';
-        attrName = attrName.substr(0, attrName.length - 4);
-      } else if (attrName.substr(attrName.length - 5).toUpperCase() === ' DESC') {
-        direction = 'DESC, ';
-        attrName = attrName.substr(0, attrName.length - 5);
-      }
-      queryPart += sql.prepareAttribute(query, null, attrName) + ' ' + direction;
-    });
-
-    // Remove trailing comma
-    if (queryPart.slice(-2) === ', ') {
-      queryPart = queryPart.slice(0, -2) + ' ';
-    }
-  }
-
-  return queryPart;
+  return res;
 }

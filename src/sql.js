@@ -5,16 +5,18 @@ _.str = require('underscore.string');
 
 var sql = {
 
+  toArray: function toArray(element) {
+    return element ?
+      _.isArray(element) ? element : [element] :
+      void 0;
+  },
+
   wrap: function(identifier) {
     if (sql.dialect === 'mssql') {
       return '[' + identifier + ']';
     } else {
       return '"' + identifier + '"';
     }
-  },
-
-  escapeId: function(val) {
-    return sql.wrap(val.replace(/'/g, '\'\''));
   },
 
   escape: function(val, stringifyObjects, timeZone) {
@@ -46,91 +48,10 @@ var sql = {
     return '\'' + val + '\'';
   },
 
-  normalizeSchema: function(schema) {
-    return _.reduce(schema, function(memo, field) {
-
-      // Marshal mssql DESCRIBE to waterline collection semantics
-      var attrName = field.ColumnName;
-      var type = field.TypeName;
-
-      memo[attrName] = {
-        type: type
-        //defaultsTo: field.Default
-      };
-
-      memo[attrName].autoIncrement = field.AutoIncrement;
-      memo[attrName].primaryKey = field.PrimaryKey;
-      memo[attrName].unique = field.Unique;
-      memo[attrName].indexed = field.Indexed;
-      memo[attrName].nullable = field.Nullable;
-
-      return memo;
-    }, {});
-  },
-
-  // @returns ALTER query for adding a column
-  addColumn: function(collectionName, attrName, attrDef) {
-    var tableName = collectionName;
-    var columnDefinition = sql.uSchema(collectionName, attrDef, attrName);
-    return 'ALTER TABLE [' + tableName + '] ADD ' + columnDefinition;
-  },
-
-  // @returns ALTER query for dropping a column
-  removeColumn: function(collectionName, attrName) {
-    var tableName = collectionName;
-    attrName = attrName;
-    return 'ALTER TABLE [' + tableName + '] DROP COLUMN ' + attrName;
-  },
-
-  insertQuery: function(collectionName, data) {
-    var tableName = collectionName;
-    return 'INSERT INTO [' + tableName + '] ' + '(' + sql.attributes(collectionName, data) + ')' + ' VALUES (' + sql.values(collectionName, data) + '); SELECT @@IDENTITY AS [id]';
-  },
-
-  // Create a schema csv for a DDL query
-  schema: function(collectionName, attributes) {
-    return sql.build(collectionName, attributes, sql.uSchema);
-  },
-
-  uSchema: function(collectionName, attribute, attrName) {
-
-    attrName = '[' + attrName + ']';
-    var type = sqlTypeCast(attribute.type);
-
-    if (attribute.primaryKey) {
-
-      // If type is an integer, set auto increment
-      if (type === 'INT') {
-        return attrName + ' INT IDENTITY PRIMARY KEY';
-      }
-
-      // Just set NOT NULL on other types
-      return attrName + ' VARCHAR(255) NOT NULL PRIMARY KEY';
-    }
-
-    // Process UNIQUE field
-    if (attribute.unique) {
-      return attrName + ' ' + type + ' UNIQUE';
-    }
-
-    return attrName + ' ' + type + ' NULL';
-  },
-
-  // Create an attribute csv for a DQL query
-  attributes: function(collectionName, attributes) {
-    return sql.build(collectionName, attributes, sql.prepareAttribute);
-  },
-
   // Create a value csv for a DQL query
   // key => optional, overrides the keys in the dictionary
   values: function(collectionName, values, key) {
     return sql.build(collectionName, values, sql.prepareValue, ', ', key);
-  },
-
-  updateCriteria: function(collectionName, values) {
-    var query = sql.build(collectionName, values, sql.prepareCriterion);
-    query = query.replace(/IS NULL/g, '=NULL');
-    return query;
   },
 
   prepareCriterion: function(collectionName, value, key, parentKey) {
@@ -147,7 +68,7 @@ var sql = {
     // Special comparator case
     if (parentKey) {
 
-      attrStr = sql.prepareAttribute(collectionName, value, parentKey);
+      attrStr = sql.wrap(parentKey);
       valueStr = sql.prepareValue(collectionName, value, parentKey);
 
       // Why don't we strip you out of those bothersome apostrophes?
@@ -171,7 +92,7 @@ var sql = {
       else if (key === 'endsWith') return attrStr + ' LIKE \'%' + nakedButClean + '\'';
       else throw new Error('Unknown comparator: ' + key);
     } else {
-      attrStr = sql.prepareAttribute(collectionName, value, key);
+      attrStr = sql.wrap(key);
       valueStr = sql.prepareValue(collectionName, value, key);
       if (_.isNull(value)) {
         return attrStr + ' IS NULL';
@@ -198,10 +119,6 @@ var sql = {
     return sql.escape(value);
   },
 
-  prepareAttribute: function(collectionName, value, attrName) {
-    return sql.wrap(attrName);
-  },
-
   // Starting point for predicate evaluation
   // parentKey => if set, look for comparators and apply them to the parent key
   where: function(collectionName, where, key, parentKey) {
@@ -226,11 +143,11 @@ var sql = {
       return ' ( ' + queryPart + ' ) ';
     } else if (_.isArray(criterion)) { // IN
       var values = sql.values(collectionName, criterion, key) || 'NULL';
-      queryPart = sql.prepareAttribute(collectionName, null, key) + ' IN (' + values + ')';
+      queryPart = sql.wrap(key) + ' IN (' + values + ')';
       return queryPart;
     } else if (key.toLowerCase() === 'like') { // LIKE
       return sql.build(collectionName, criterion, function(collectionName, value, attrName) {
-        var attrStr = sql.prepareAttribute(collectionName, value, attrName);
+        var attrStr = sql.wrap(attrName);
         if (_.isRegExp(value)) {
           throw new Error('RegExp not supported');
         }
@@ -248,52 +165,6 @@ var sql = {
 
   },
 
-  serializeOptions: function(collectionName, options) {
-
-    var queryPart = '';
-
-    if (options.where) {
-      queryPart += 'WHERE ' + sql.where(collectionName, options.where) + ' ';
-    }
-
-    if (options.groupBy) {
-      queryPart += 'GROUP BY ';
-
-      // Normalize to array
-      if (!Array.isArray(options.groupBy)) options.groupBy = [options.groupBy];
-      options.groupBy.forEach(function(key) {
-        queryPart += key + ', ';
-      });
-
-      // Remove trailing comma
-      queryPart = queryPart.slice(0, -2) + ' ';
-    }
-
-    //options are sorted during skip when applicable
-    if (options.sort && !options.skip) {
-      queryPart += 'ORDER BY ';
-
-      // Sort through each sort attribute criteria
-      _.each(options.sort, function(direction, attrName) {
-
-        queryPart += sql.prepareAttribute(collectionName, null, attrName) + ' ';
-
-        // Basic MongoDB-style numeric sort direction
-        if (direction === 1) {
-          queryPart += 'ASC, ';
-        } else {
-          queryPart += 'DESC, ';
-        }
-      });
-
-      // Remove trailing comma
-      if (queryPart.slice(-2) === ', ') {
-        queryPart = queryPart.slice(0, -2) + ' ';
-      }
-    }
-
-    return queryPart;
-  },
 
   build: function(collectionName, collection, fn, separator, keyOverride, parentKey) {
 
@@ -311,49 +182,6 @@ var sql = {
   }
 
 };
-
-// Cast waterline types into SQL data types
-function sqlTypeCast(type) {
-
-  type = type && type.toLowerCase();
-
-  switch (type) {
-    case 'binary':
-    case 'string':
-      return 'NVARCHAR(max)';
-
-    case 'array':
-    case 'json':
-    case 'text':
-      return 'VARCHAR(max)';
-
-    case 'boolean':
-      return 'BIT';
-
-    case 'int':
-    case 'integer':
-      return 'INT';
-
-    case 'float':
-    case 'double':
-      return 'FLOAT';
-
-    case 'date':
-      return 'DATE';
-    case 'time':
-      return 'TIME';
-    case 'datetime':
-      return 'DATETIME';
-
-    default:
-      console.error('Unregistered type given: ' + type);
-      return 'VARCHAR';
-  }
-}
-
-function wrapInQuotes(val) {
-  return '"' + val + '"';
-}
 
 function toSqlDate(date) {
   date = date.getUTCFullYear() + '-' +

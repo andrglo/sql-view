@@ -87,18 +87,8 @@
       "format": "fixed"
     },
     "ENDERECO": {
-      "title": "Logradouro",
-      "description": "Endereco",
       "type": "string",
-      "maxLength": 45,
-      "validations": {
-        "isUppercase": {
-          "message": "ENDERECO must be uppercase"
-        },
-        "isIn": {
-          "args": [["STREET", "AVENUE"]]
-        }
-      }
+      "maxLength": 45
     },
     "NUMERO": {
       "title": "Número do Logradouro",
