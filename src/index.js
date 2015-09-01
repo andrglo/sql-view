@@ -99,7 +99,7 @@ var sql = {
       where += fn(value, keyOverride || key, parentKey);
       where += separator;
     });
-    return _.str.rtrim(where, separator);
+    return _.trim(where, separator);
   }
 
 };

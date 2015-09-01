@@ -1,0 +1,33 @@
+{
+  "type": "object",
+  "properties": {
+    "NOMECAD": {
+      "type": "string",
+      "maxLength": 60,
+      "required": true
+    },
+    "ENDERECO": {
+      "type": "string",
+      "maxLength": 45
+    },
+    "NUMERO": {
+      "type": "string",
+      "maxLength": 6
+    },
+    "DATNASC": {
+      "type": "date"
+    },
+    "DATNASCZ": {
+      "type": "datetime"
+    },
+    "DATNASCNOZ": {
+      "type": "datetime",
+      "timezone": "ignore"
+    },
+    "VALORLCTO": {
+      "type": "number",
+      "maxLength": 14,
+      "decimals": 2
+    }
+  }
+}

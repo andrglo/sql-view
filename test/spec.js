@@ -14,58 +14,37 @@ var log = gutil.log;
 module.exports = function(options) {
 
   var db;
-  var cadAtivo;
-  var numberOfRecordsToGenerate = 100;
   var nextDay = new Date();
   var datesSaved = [];
   before(function(done) {
     db = options.db;
     sv = sqlView(db.dialect);
-    cadAtivo = require('./entities/cadastro.js')({db: db});
-    log('Is generating ' + numberOfRecordsToGenerate + ' entities...');
+    log('Is generating ' + 100 + ' entities...');
     var promise = Promise.resolve();
     var i = 1;
-    _.times(numberOfRecordsToGenerate, function() {
+    _.times(100, function() {
       var order = i++;
       var group = order % 10;
       promise = promise.then(function() {
         nextDay.setDate(nextDay.getDate() + 1);
         datesSaved.push(new Date(nextDay));
-        return cadAtivo
-          .create({
-            NOMECAD: _.padLeft(String(order), 3, '00'),
-            NUMERO: 'QRYTST',
-            ENDERECO: '' + group,
-            VALORLCTO: 10.01,
-            DATNASC: nextDay,
-            DATNASCZ: nextDay,
-            DATNASCNOZ: nextDay,
-            fornecedor: {
-              SIGLAFOR: 'query test',
-              NUMERO: '99',
-              docpagvc: [{
-                VALOR: 1,
-                DATAVENC: '2015-01-01',
-                categoria: {
-                  id: 'CAT1_' + order,
-                  DESCEVENTO: 'query test 1'
-                }
-              },
-                {
-                  VALOR: 2,
-                  DATAVENC: '2015-01-02',
-                  categoria: {
-                    id: 'CAT2_' + order,
-                    DESCEVENTO: 'query test 2'
-                  }
-                }]
-            },
-            ClassificaçãoCad: [
-              {
-                Classe: 'Fornecedor'
-              }
-            ]
-          });
+        return db.execute(
+          'INSERT INTO person VALUES' +
+          '($1, $2, $3, $4, $5, $6, $7)', [
+            _.padLeft(String(order), 3, '00'),
+            '' + group,
+            'QRYTST',
+            nextDay,
+            nextDay,
+            nextDay,
+            {
+              value: 10.01,
+              type: 'number',
+              maxLength: 8,
+              decimals: 2
+            }
+          ]
+        );
       });
     });
     promise
@@ -79,16 +58,20 @@ module.exports = function(options) {
 
     it('should read all the records', function(done) {
       db
-        .query(sv.build('SELECT * FROM ' + db.wrap('CADASTRO')).statement)
+        .query(sv.build('SELECT * FROM ' + db.wrap('person')).statement)
         .then(function(recordset) {
           expect(recordset).to.be.a('array');
-          expect(recordset.length).to.equal(numberOfRecordsToGenerate);
+          expect(recordset.length).to.equal(100);
           done();
         })
         .catch(done);
     });
     it('should read 10 records', function(done) {
-      var view = sv.build('SELECT * FROM ' + db.wrap('CADASTRO'), {where: {ENDERECO: '0'}});
+      var view = sv.build('SELECT * FROM ' + db.wrap('person'), {
+        where: {
+          ENDERECO: '0'
+        }
+      });
       db
         .query(view.statement, view.params)
         .then(function(recordset) {
@@ -99,7 +82,7 @@ module.exports = function(options) {
         .catch(done);
     });
     it('should read all the records using like', function(done) {
-      var view = sv.build('SELECT * FROM ' + db.wrap('CADASTRO'), {
+      var view = sv.build('SELECT * FROM ' + db.wrap('person'), {
         where: {
           NUMERO: {
             like: '%YTST'
@@ -110,13 +93,13 @@ module.exports = function(options) {
         .query(view.statement, view.params)
         .then(function(recordset) {
           expect(recordset).to.be.a('array');
-          expect(recordset.length).to.equal(numberOfRecordsToGenerate);
+          expect(recordset.length).to.equal(100);
           done();
         })
         .catch(done);
     });
     it('should read 10 records using like', function(done) {
-      var view = sv.build('SELECT * FROM ' + db.wrap('CADASTRO'), {where: {ENDERECO: {like: '%0%'}}});
+      var view = sv.build('SELECT * FROM ' + db.wrap('person'), {where: {ENDERECO: {like: '%0%'}}});
       db
         .query(view.statement, view.params)
         .then(function(recordset) {
@@ -127,7 +110,7 @@ module.exports = function(options) {
         .catch(done);
     });
     it('should read all the records using or', function(done) {
-      var view = sv.build('SELECT * FROM ' + db.wrap('CADASTRO'), {
+      var view = sv.build('SELECT * FROM ' + db.wrap('person'), {
         where: {
           or: [
             {NUMERO: 'QRYTST'},
@@ -139,13 +122,13 @@ module.exports = function(options) {
         .query(view.statement, view.params)
         .then(function(recordset) {
           expect(recordset).to.be.a('array');
-          expect(recordset.length).to.equal(numberOfRecordsToGenerate);
+          expect(recordset.length).to.equal(100);
           done();
         })
         .catch(done);
     });
     it('should read none record using and', function(done) {
-      var view = sv.build('SELECT * FROM ' + db.wrap('CADASTRO'), {
+      var view = sv.build('SELECT * FROM ' + db.wrap('person'), {
         where: {
           and: [
             {NUMERO: 'QRYTST'},
@@ -163,7 +146,7 @@ module.exports = function(options) {
         .catch(done);
     });
     it('should read 10 records using or', function(done) {
-      var view = sv.build('SELECT * FROM ' + db.wrap('CADASTRO'), {
+      var view = sv.build('SELECT * FROM ' + db.wrap('person'), {
         where: {
           NUMERO: 'QRYTST',
           or: [
@@ -183,7 +166,7 @@ module.exports = function(options) {
         .catch(done);
     });
     it('should read the 3 records in the expected page', function(done) {
-      var view = sv.build('SELECT * FROM ' + db.wrap('CADASTRO'), {
+      var view = sv.build('SELECT * FROM ' + db.wrap('person'), {
         where: {
           NUMERO: 'QRYTST'
         },
@@ -205,7 +188,7 @@ module.exports = function(options) {
         .catch(done);
     });
     it('should read 10 grouped records', function(done) {
-      var view = sv.build('SELECT * FROM ' + db.wrap('CADASTRO'), {
+      var view = sv.build('SELECT * FROM ' + db.wrap('person'), {
         groupBy: 'ENDERECO'
       });
       db
@@ -218,7 +201,7 @@ module.exports = function(options) {
         .catch(done);
     });
     it('should paginate the 10 grouped records in ascending', function(done) {
-      var view = sv.build('SELECT * FROM ' + db.wrap('CADASTRO'), {
+      var view = sv.build('SELECT * FROM ' + db.wrap('person'), {
         groupBy: 'ENDERECO',
         limit: 3,
         skip: 3,
@@ -237,7 +220,7 @@ module.exports = function(options) {
         .catch(done);
     });
     it('should paginate the 10 grouped records in descending', function(done) {
-      var view = sv.build('SELECT * FROM ' + db.wrap('CADASTRO'), {
+      var view = sv.build('SELECT * FROM ' + db.wrap('person'), {
         groupBy: 'ENDERECO',
         limit: 3,
         skip: 3,
@@ -256,7 +239,7 @@ module.exports = function(options) {
         .catch(done);
     });
     it('should read 10 grouped records with some calculation', function(done) {
-      var view = sv.build('SELECT * FROM ' + db.wrap('CADASTRO'), {
+      var view = sv.build('SELECT * FROM ' + db.wrap('person'), {
         groupBy: 'ENDERECO as V',
         sum: 'VALORLCTO as sumV',
         avg: 'VALORLCTO as avgV',
@@ -277,7 +260,7 @@ module.exports = function(options) {
         .catch(done);
     });
     it('should read the three last records', function(done) {
-      var view = sv.build('SELECT * FROM ' + db.wrap('CADASTRO'), {
+      var view = sv.build('SELECT * FROM ' + db.wrap('person'), {
         limit: 3,
         order: ['NOMECAD DESC']
       });
@@ -294,7 +277,7 @@ module.exports = function(options) {
         .catch(done);
     });
     it('should read 10 records using and', function(done) {
-      var view = sv.build('SELECT * FROM ' + db.wrap('CADASTRO'), {
+      var view = sv.build('SELECT * FROM ' + db.wrap('person'), {
         where: {
           NUMERO: 'QRYTST',
           ENDERECO: '0'
@@ -310,7 +293,7 @@ module.exports = function(options) {
         .catch(done);
     });
     it('should read 10 records using contains', function(done) {
-      var view = sv.build('SELECT * FROM ' + db.wrap('CADASTRO'), {
+      var view = sv.build('SELECT * FROM ' + db.wrap('person'), {
         where: {
           NUMERO: {
             contains: 'QRY'
@@ -328,7 +311,7 @@ module.exports = function(options) {
         .catch(done);
     });
     it('should read 20 records using or in a array', function(done) {
-      var view = sv.build('SELECT * FROM ' + db.wrap('CADASTRO'), {
+      var view = sv.build('SELECT * FROM ' + db.wrap('person'), {
         where: {
           NUMERO: {
             contains: 'QRY'
@@ -346,7 +329,7 @@ module.exports = function(options) {
         .catch(done);
     });
     it('should read 80 records using or in a negate array', function(done) {
-      var view = sv.build('SELECT * FROM ' + db.wrap('CADASTRO'), {
+      var view = sv.build('SELECT * FROM ' + db.wrap('person'), {
         where: {
           NUMERO: {
             contains: 'QRY'
@@ -364,7 +347,7 @@ module.exports = function(options) {
         .catch(done);
     });
     it('should read 10 records using <', function(done) {
-      var view = sv.build('SELECT * FROM ' + db.wrap('CADASTRO'), {
+      var view = sv.build('SELECT * FROM ' + db.wrap('person'), {
         where: {
           NUMERO: {
             contains: 'QRY'
@@ -382,7 +365,7 @@ module.exports = function(options) {
         .catch(done);
     });
     it('should read 20 records using <=', function(done) {
-      var view = sv.build('SELECT * FROM ' + db.wrap('CADASTRO'), {
+      var view = sv.build('SELECT * FROM ' + db.wrap('person'), {
         where: {
           NUMERO: {
             contains: 'QRY'
@@ -400,7 +383,7 @@ module.exports = function(options) {
         .catch(done);
     });
     it('should read 80 records using >', function(done) {
-      var view = sv.build('SELECT * FROM ' + db.wrap('CADASTRO'), {
+      var view = sv.build('SELECT * FROM ' + db.wrap('person'), {
         where: {
           NUMERO: {
             contains: 'QRY'
@@ -418,7 +401,7 @@ module.exports = function(options) {
         .catch(done);
     });
     it('should read 90 records using >=', function(done) {
-      var view = sv.build('SELECT * FROM ' + db.wrap('CADASTRO'), {
+      var view = sv.build('SELECT * FROM ' + db.wrap('person'), {
         where: {
           NUMERO: {
             contains: 'QRY'
@@ -436,7 +419,7 @@ module.exports = function(options) {
         .catch(done);
     });
     it('should read 100 records using not null', function(done) {
-      var view = sv.build('SELECT * FROM ' + db.wrap('CADASTRO'), {
+      var view = sv.build('SELECT * FROM ' + db.wrap('person'), {
         where: {
           NUMERO: {
             not: null
@@ -453,7 +436,7 @@ module.exports = function(options) {
         .catch(done);
     });
     it('should read 99 records using not a value', function(done) {
-      var view = sv.build('SELECT * FROM ' + db.wrap('CADASTRO'), {
+      var view = sv.build('SELECT * FROM ' + db.wrap('person'), {
         where: {
           NOMECAD: {
             not: '001'
@@ -471,7 +454,7 @@ module.exports = function(options) {
     });
     it('should throw a comparator error message', function(done) {
       try {
-        var v = sv.build('SELECT * FROM ' + db.wrap('CADASTRO'), {
+        var v = sv.build('SELECT * FROM ' + db.wrap('person'), {
           where: {
             NOMECAD: {
               xxx: '001'
@@ -486,7 +469,7 @@ module.exports = function(options) {
       done(new Error('Invalid view created'));
     });
     it('should read only one field and 9 records using startsWith', function(done) {
-      var view = sv.build('SELECT * FROM ' + db.wrap('CADASTRO'), {
+      var view = sv.build('SELECT * FROM ' + db.wrap('person'), {
         where: {
           NOMECAD: {
             startsWith: '00'
@@ -506,7 +489,7 @@ module.exports = function(options) {
         .catch(done);
     });
     it('should read only one field and 9 records using endsWith', function(done) {
-      var view = sv.build('SELECT * FROM ' + db.wrap('CADASTRO'), {
+      var view = sv.build('SELECT * FROM ' + db.wrap('person'), {
         where: {
           NOMECAD: {
             endsWith: '00'
@@ -526,7 +509,7 @@ module.exports = function(options) {
 
   describe('querying date and time', function() {
     it('should read 1 record in a date column', function(done) {
-      var view = sv.build('SELECT * FROM ' + db.wrap('CADASTRO'), {
+      var view = sv.build('SELECT * FROM ' + db.wrap('person'), {
         where: {
           DATNASC: datesSaved[0]
         }
@@ -543,7 +526,7 @@ module.exports = function(options) {
         .catch(done);
     });
     it('should read 10 records in a date column', function(done) {
-      var view = sv.build('SELECT * FROM ' + db.wrap('CADASTRO'), {
+      var view = sv.build('SELECT * FROM ' + db.wrap('person'), {
         where: {
           DATNASC: {lte: datesSaved[9]}
         }
@@ -558,7 +541,7 @@ module.exports = function(options) {
         .catch(done);
     });
     it('should read 1 record in a datetime column with timezone', function(done) {
-      var view = sv.build('SELECT * FROM ' + db.wrap('CADASTRO'), {
+      var view = sv.build('SELECT * FROM ' + db.wrap('person'), {
         where: {
           DATNASCZ: datesSaved[0]
         }
@@ -573,7 +556,7 @@ module.exports = function(options) {
         .catch(done);
     });
     it('should read 10 records in a datetime column with timezone', function(done) {
-      var view = sv.build('SELECT * FROM ' + db.wrap('CADASTRO'), {
+      var view = sv.build('SELECT * FROM ' + db.wrap('person'), {
         where: {
           DATNASCZ: {lte: datesSaved[9]}
         }
@@ -588,7 +571,7 @@ module.exports = function(options) {
         .catch(done);
     });
     it('should read 1 record in a datetime column without timezone', function(done) {
-      var view = sv.build('SELECT * FROM ' + db.wrap('CADASTRO'), {
+      var view = sv.build('SELECT * FROM ' + db.wrap('person'), {
         where: {
           DATNASCNOZ: datesSaved[0]
         }
@@ -603,7 +586,7 @@ module.exports = function(options) {
         .catch(done);
     });
     it('should read 10 records in a datetime column without timezone', function(done) {
-      var view = sv.build('SELECT * FROM ' + db.wrap('CADASTRO'), {
+      var view = sv.build('SELECT * FROM ' + db.wrap('person'), {
         where: {
           DATNASCNOZ: {lte: datesSaved[9]}
         }

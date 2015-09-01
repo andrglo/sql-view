@@ -1,8 +1,9 @@
 var gutil = require('gulp-util');
 var PgCrLayer = require('pg-cr-layer');
 var MssqlCrLayer = require('mssql-cr-layer');
+var jst = require('json-schema-table');
+var personSchema = require('./schemas/person.json');
 
-var tasks = require('./tasks');
 var spec = require('./spec');
 
 var pgConfig = {
@@ -70,7 +71,7 @@ before(function(done) {
           return pgOptions.db.connect();
         })
         .then(function() {
-          return tasks.createTables(pgOptions.db);
+          return jst('person', personSchema, {db: pgOptions.db}).create();
         });
     })
     .then(function() {
@@ -90,7 +91,7 @@ before(function(done) {
                 return mssqlOptions.db.connect();
               })
               .then(function() {
-                return tasks.createTables(mssqlOptions.db);
+                return jst('person', personSchema, {db: mssqlOptions.db}).create();
               });
           });
       }
