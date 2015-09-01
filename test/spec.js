@@ -192,7 +192,7 @@ module.exports = function(options) {
         groupBy: 'ENDERECO'
       });
       db
-        .query(view.statement)
+        .query(view.statement, view.params)
         .then(function(recordset) {
           expect(recordset).to.be.a('array');
           expect(recordset.length).to.equal(10);
@@ -208,7 +208,7 @@ module.exports = function(options) {
         order: ['ENDERECO ASC']
       });
       db
-        .query(view.statement)
+        .query(view.statement, view.params)
         .then(function(recordset) {
           expect(recordset).to.be.a('array');
           expect(recordset.length).to.equal(3);
@@ -227,7 +227,7 @@ module.exports = function(options) {
         order: 'ENDERECO DESC'
       });
       db
-        .query(view.statement)
+        .query(view.statement, view.params)
         .then(function(recordset) {
           expect(recordset).to.be.a('array');
           expect(recordset.length).to.equal(3);
@@ -247,7 +247,7 @@ module.exports = function(options) {
         min: 'VALORLCTO as minV'
       });
       db
-        .query(view.statement)
+        .query(view.statement, view.params)
         .then(function(recordset) {
           expect(recordset).to.be.a('array');
           expect(recordset.length).to.equal(10);
@@ -265,7 +265,7 @@ module.exports = function(options) {
         order: ['NOMECAD DESC']
       });
       db
-        .query(view.statement)
+        .query(view.statement, view.params)
         .then(function(recordset) {
           expect(recordset).to.be.a('array');
           expect(recordset.length).to.equal(3);
@@ -427,7 +427,7 @@ module.exports = function(options) {
         }
       });
       db
-        .query(view.statement)
+        .query(view.statement, view.params)
         .then(function(recordset) {
           expect(recordset).to.be.a('array');
           expect(recordset.length).to.equal(100);
