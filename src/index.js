@@ -174,7 +174,8 @@ function build(view, criteria) {
 
   var statement = 'SELECT ' +
     (columns.length ? columns.join() : '*') +
-    ' FROM (' + view + ') t' +
+    ' FROM ' +
+    (isView(view) ? '(' + view + ') t' : sql.wrap(view)) +
     (where ? ' WHERE ' + where : '') +
     (groupBy.length ? ' GROUP BY ' + groupBy.join() : '');
 
@@ -227,4 +228,8 @@ function toArray(element) {
   return element ?
     _.isArray(element) ? element : [element] :
     void 0;
+}
+
+function isView(view) {
+  return view.toLowerCase().indexOf('select') !== -1;
 }

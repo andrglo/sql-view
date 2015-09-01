@@ -488,7 +488,7 @@ module.exports = function(options) {
         })
         .catch(done);
     });
-    it('should read only one field and 9 records using endsWith', function(done) {
+    it('should read 1 record using endsWith', function(done) {
       var view = sv.build('SELECT * FROM ' + db.wrap('person'), {
         where: {
           NOMECAD: {
@@ -596,6 +596,46 @@ module.exports = function(options) {
         .then(function(recordset) {
           expect(recordset).to.be.a('array');
           expect(recordset.length).to.equal(10);
+          done();
+        })
+        .catch(done);
+    });
+  });
+
+  describe('querying a table', function() {
+    it('should read only one field and 9 records using startsWith', function(done) {
+      var view = sv.build('person', {
+        where: {
+          NOMECAD: {
+            startsWith: '00'
+          }
+        },
+        select: 'NOMECAD'
+      });
+      db
+        .query(view.statement, view.params)
+        .then(function(recordset) {
+          expect(recordset).to.be.a('array');
+          expect(recordset.length).to.equal(9);
+          expect(Object.keys(recordset[0]).length).to.equal(1);
+          expect(recordset[0].NOMECAD).to.be.a('string');
+          done();
+        })
+        .catch(done);
+    });
+    it('should read only one record using endsWith', function(done) {
+      var view = sv.build('person', {
+        where: {
+          NOMECAD: {
+            endsWith: '00'
+          }
+        }
+      });
+      db
+        .query(view.statement, view.params)
+        .then(function(recordset) {
+          expect(recordset).to.be.a('array');
+          expect(recordset.length).to.equal(1);
           done();
         })
         .catch(done);
