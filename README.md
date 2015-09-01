@@ -2,7 +2,6 @@
 > Rewrite a select statement embedding a filter, sort, group or pagination using an otions object.
  For MS Sql Server and postgres
 
-
 ## Install
 
 ```sh
@@ -13,10 +12,26 @@ $ npm install --save sql-view
 ## Usage
 
 ```js
-var sqlView = require('sql-view');
+var sqlView = require('sql-view')('postgres');
+    
+var view = sqlView.build('SELECT * FROM products'), {
+  where: {
+    price: {
+      lt: '1000'
+    }
+  });
+console.log(view); 
+// => { statement: 'SELECT * FROM (SELECT * FROM "products") t WHERE "price"<$1',
+//      params: [ '1000' ]
+//    }
+
 
 ```
 
+## Credits
+
+Inspired by the query language of [Waterline](https://github.com/balderdashy/waterline)
+implemented by [cnect](https://github.com/cnect/sails-sqlserver)
 ## License
 
 MIT © [Andre Gloria]()
