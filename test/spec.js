@@ -623,6 +623,35 @@ module.exports = function(options) {
         })
         .catch(done);
     });
+    it('should read only one field and 10 records using startsWith and ensWith combined', function(done) {
+      var view = sv.build('person', {
+        where: {
+          or: [
+            {
+              NOMECAD: {
+                startsWith: '00'
+              }
+            },
+            {
+              NOMECAD: {
+                endsWith: '99'
+              }
+            }
+          ]
+        },
+        select: 'NOMECAD'
+      });
+      db
+        .query(view.statement, view.params)
+        .then(function(recordset) {
+          expect(recordset).to.be.a('array');
+          expect(recordset.length).to.equal(10);
+          expect(Object.keys(recordset[0]).length).to.equal(1);
+          expect(recordset[0].NOMECAD).to.be.a('string');
+          done();
+        })
+        .catch(done);
+    });
     it('should read only one record using endsWith', function(done) {
       var view = sv.build('person', {
         where: {
