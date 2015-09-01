@@ -3,7 +3,106 @@
 var _ = require('lodash');
 var debug = require('debug')('sql-view');
 var assert = require('assert');
-var sql = require('./sql');
+
+var sql = {
+
+  wrap: function(identifier) {
+    if (sql.dialect === 'mssql') {
+      return '[' + identifier + ']';
+    } else {
+      return '"' + identifier + '"';
+    }
+  },
+
+  values: function(values, key) {
+    return sql.buildWhere(values, sql.prepareValue, ', ', key);
+  },
+
+  prepareCriterion: function(value, key, parentKey) {
+    if (_.isObject(value) && !_.isDate(value) && !_.isArray(value)) {
+      return sql.where(value, null, key);
+    }
+    var attrStr;
+    if (parentKey) {
+      attrStr = sql.wrap(parentKey);
+      if (key === 'lt') {
+        return attrStr + '<' + sql.prepareValue(value);
+      } else if (key === 'lte') {
+        return attrStr + '<=' + sql.prepareValue(value);
+      } else if (key === 'gt') {
+        return attrStr + '>' + sql.prepareValue(value);
+      } else if (key === 'gte') {
+        return attrStr + '>=' + sql.prepareValue(value);
+      } else if (key === 'not') {
+        if (value === null) {
+          return attrStr + ' IS NOT NULL';
+        } else if (_.isArray(value)) {
+          return attrStr + ' NOT IN (' + sql.values(value, key) + ')';
+        } else {
+          return attrStr + '<>' + sql.prepareValue(value);
+        }
+      } else if (key === 'like' || key === 'contains' || key === 'startsWith' || key === 'endsWith') {
+        if (key === 'contains') {
+          value = '%' + value + '%';
+        } else if (key === 'startsWith') {
+          value += '%';
+        } else if (key === 'endsWith') {
+          value = '%' + value;
+        }
+        return attrStr + ' LIKE ' + sql.prepareValue(value);
+      } else {
+        throw new Error('Unknown comparator: ' + key);
+      }
+    } else {
+      attrStr = sql.wrap(key);
+      if (_.isNull(value)) {
+        return attrStr + ' IS NULL';
+      } else {
+        return attrStr + '=' + sql.prepareValue(value, key);
+      }
+    }
+  },
+
+  prepareValue: function(value) {
+    sql.params.push(value);
+    return '$' + sql.params.length;
+  },
+
+  where: function(where, key, parentKey) {
+    return sql.buildWhere(where, sql.predicate, ' AND ', undefined, parentKey);
+  },
+
+  predicate: function(criterion, key, parentKey) {
+    var partial = '';
+    if (parentKey) {
+      return sql.prepareCriterion(criterion, key, parentKey);
+    }
+    if (key.toLowerCase() === 'or') {
+      partial = sql.buildWhere(criterion, sql.where, ' OR ');
+      return ' ( ' + partial + ' ) ';
+    } else if (key.toLowerCase() === 'and') {
+      partial = sql.buildWhere(criterion, sql.where, ' AND ');
+      return ' ( ' + partial + ' ) ';
+    } else if (_.isArray(criterion)) {
+      var values = sql.values(criterion, key) || 'NULL';
+      partial = sql.wrap(key) + ' IN (' + values + ')';
+      return partial;
+    } else {
+      return sql.prepareCriterion(criterion, key);
+    }
+  },
+
+  buildWhere: function(collection, fn, separator, keyOverride, parentKey) {
+    separator = separator || ', ';
+    var where = '';
+    _.each(collection, function(value, key) {
+      where += fn(value, keyOverride || key, parentKey);
+      where += separator;
+    });
+    return _.str.rtrim(where, separator);
+  }
+
+};
 
 module.exports = function(dialect) {
 
@@ -30,38 +129,38 @@ function build(view, criteria) {
   var orderBy = [];
   var where = criteria.where ? sql.where(criteria.where) : void 0;
 
-  _.forEach(sql.toArray(criteria.select), function(column) {
+  _.forEach(toArray(criteria.select), function(column) {
     var info = splitAlias(column);
     columns.push(info.column + ' AS ' + info.as);
   });
 
-  _.forEach(sql.toArray(criteria.groupBy), function(column) {
+  _.forEach(toArray(criteria.groupBy), function(column) {
     var info = splitAlias(column);
     columns.push(info.column + ' AS ' + info.as);
     groupBy.push(info.column);
   });
 
-  _.forEach(sql.toArray(criteria.sum), function(column) {
+  _.forEach(toArray(criteria.sum), function(column) {
     var info = splitAlias(column);
     columns.push('SUM(' + info.column + ') AS ' + info.as);
   });
 
-  _.forEach(sql.toArray(criteria.avg), function(column) {
+  _.forEach(toArray(criteria.avg), function(column) {
     var info = splitAlias(column);
     columns.push('AVG(' + info.column + ') AS ' + info.as);
   });
 
-  _.forEach(sql.toArray(criteria.max), function(column) {
+  _.forEach(toArray(criteria.max), function(column) {
     var info = splitAlias(column);
     columns.push('MAX(' + info.column + ') AS ' + info.as);
   });
 
-  _.forEach(sql.toArray(criteria.min), function(column) {
+  _.forEach(toArray(criteria.min), function(column) {
     var info = splitAlias(column);
     columns.push('MIN(' + info.column + ') AS ' + info.as);
   });
 
-  _.forEach(sql.toArray(criteria.order), function(column) {
+  _.forEach(toArray(criteria.order), function(column) {
     var direction;
     if (column.substr(column.length - 4).toUpperCase() === ' ASC') {
       direction = 'ASC';
@@ -122,4 +221,10 @@ function splitAlias(name) {
     res.as = res.column;
   }
   return res;
+}
+
+function toArray(element) {
+  return element ?
+    _.isArray(element) ? element : [element] :
+    void 0;
 }
