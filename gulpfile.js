@@ -14,8 +14,8 @@ gulp.task('static', function () {
     .pipe(eslint.failAfterError());
 });
 
-gulp.task('nsp', function (cb) {
-  nsp('package.json', cb);
+gulp.task('nsp', function(cb) {
+  nsp({package: path.join(__dirname, 'package.json')}, cb);
 });
 
 gulp.task('pre-test', function () {

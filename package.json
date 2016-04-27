@@ -23,19 +23,19 @@
     "sort"
   ],
   "devDependencies": {
-    "chai": "^3.2.0",
-    "glob": "^5.0.14",
-    "gulp": "^3.6.0",
+    "chai": "^3.5.0",
+    "glob": "^7.0.3",
+    "gulp": "^3.9.1",
     "gulp-coveralls": "^0.1.0",
-    "gulp-eslint": "^0.15.0",
-    "gulp-istanbul": "^0.9.0",
-    "gulp-mocha": "^2.0.0",
-    "gulp-nsp": "^0.4.5",
-    "gulp-util": "^3.0.6",
-    "json-schema-table": "^0.1.4",
-    "mssql-cr-layer": "^0.0.4",
-    "pg-cr-layer": "^0.0.4",
-    "unorm": "^1.3.3"
+    "gulp-eslint": "^2.0.0",
+    "gulp-istanbul": "^0.10.4",
+    "gulp-mocha": "^2.2.0",
+    "gulp-nsp": "^2.4.0",
+    "gulp-util": "^3.0.7",
+    "json-schema-table": "^1.0.2",
+    "mssql-cr-layer": "^1.0.5",
+    "pg-cr-layer": "^1.0.3",
+    "unorm": "^1.4.1"
   },
   "scripts": {
     "prepublish": "gulp prepublish",
@@ -44,6 +44,6 @@
   "license": "MIT",
   "dependencies": {
     "debug": "^2.2.0",
-    "lodash": "^3.10.1"
+    "lodash": "^4.11.1"
   }
 }

@@ -31,7 +31,7 @@ module.exports = function(options) {
         return db.execute(
           'INSERT INTO person VALUES' +
           '($1, $2, $3, $4, $5, $6, $7)', [
-            _.padLeft(String(order), 3, '00'),
+            _.padStart(String(order), 3, '00'),
             '' + group,
             'QRYTST',
             nextDay,
