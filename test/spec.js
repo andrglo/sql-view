@@ -244,7 +244,8 @@ module.exports = function(options) {
         sum: 'VALORLCTO as sumV',
         avg: 'VALORLCTO as avgV',
         max: 'VALORLCTO as maxV',
-        min: 'VALORLCTO as minV'
+        min: 'VALORLCTO as minV',
+        count: 'VALORLCTO as countV'
       });
       db
         .query(view.statement, view.params)
@@ -255,6 +256,7 @@ module.exports = function(options) {
           expect(Number(recordset[0].avgV)).to.equal(10.01);
           expect(Number(recordset[0].maxV)).to.equal(10.01);
           expect(Number(recordset[0].minV)).to.equal(10.01);
+          expect(Number(recordset[0].countV)).to.equal(10);
           done();
         })
         .catch(done);

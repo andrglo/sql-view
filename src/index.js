@@ -160,6 +160,11 @@ function build(view, criteria) {
     columns.push('MIN(' + info.column + ') AS ' + info.as);
   });
 
+  _.forEach(toArray(criteria.count), function(column) {
+    var info = splitAlias(column);
+    columns.push('COUNT(' + info.column + ') AS ' + info.as);
+  });
+
   _.forEach(toArray(criteria.order), function(column) {
     var direction;
     if (column.substr(column.length - 4).toUpperCase() === ' ASC') {
