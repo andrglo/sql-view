@@ -1,5 +1,5 @@
 # sql-view [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Dependency Status][daviddm-image]][daviddm-url] [![Coverage percentage][coveralls-image]][coveralls-url]
-> Rewrite a select statement embedding a filter, sort, group or pagination using an otions object.
+> Rewrite a select statement embedding a filter, order, group or pagination using an otions object.
  For MS Sql Server and postgres
 
 ## Install
@@ -45,7 +45,7 @@ The criteria objects are formed using one of four types of object keys. These ar
 keys used in a query object. It is loosely based on the criteria used in Waterline.
 
 ```javascript
-sqlView.build('select * from table', { where: { name: 'foo' }, skip: 20, limit: 10, sort: 'name DESC' });
+sqlView.build('select * from table', { where: { name: 'foo' }, skip: 20, limit: 10, order: 'name DESC' });
 ```
 
 Use the key as the column name and the value for a exact match
@@ -117,7 +117,7 @@ available are:
 
 * `limit`
 * `skip`
-* `sort`
+* `order`
 * `select`
 
 Limits the number of results returned from a query
@@ -139,16 +139,16 @@ sqlView.build('select * from table', { where: { name: 'foo' }, limit: 10, skip: 
 ```
 
 Results can be sorted by attribute name. Simply specify an attribute name for natural (ascending)
-sort, or specify an _asc_ or _desc_ flag for ascending or descending orders respectively.
+order, or specify an _asc_ or _desc_ flag for ascending or descending order respectively.
 
 ```javascript
 // Sort by name in ascending order (default)
-sqlView.build('select * from table', { where: { name: 'foo' }, sort: 'name' });
+sqlView.build('select * from table', { where: { name: 'foo' }, order: 'name' });
 // or
-sqlView.build('select * from table', { where: { name: 'foo' }, sort: 'name asc' });
+sqlView.build('select * from table', { where: { name: 'foo' }, order: 'name asc' });
 
-// Sort by name in descending order
-sqlView.build('select * from table', { where: { name: 'foo' }, sort: 'name desc' });
+// Sort by name in descending order and also in email
+sqlView.build('select * from table', { where: { name: 'foo' }, order: ['name desc', 'email'] });
 
 ```
 
@@ -158,6 +158,15 @@ Apply a projection
 // Returns only the field name
 sqlView.build('select * from table', { where: { age: { lt: 30 } }, select: ['name'] })
 ```
+
+Grouping
+
+```javascript
+// Returns only the field name
+sqlView.build('select * from table', { groupBy: 'state', sum: 'population' })
+```
+
+The group functions available are: _sum_, _avg_, _max_ and _min_
 
 ## Credits
 
