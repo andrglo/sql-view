@@ -7,10 +7,10 @@ var assert = require('assert');
 var sql = {
 
   wrap: function(identifier) {
-    if (sql.dialect === 'mssql') {
-      return '[' + identifier + ']';
-    } else {
+    if (sql.dialect === 'postgres') {
       return '"' + identifier + '"';
+    } else {
+      return '[' + identifier + ']';
     }
   },
 
@@ -109,7 +109,7 @@ module.exports = function(dialect) {
   return {
     build: function(view, criteria) {
       criteria = criteria || {};
-      sql.dialect = dialect;
+      sql.dialect = dialect || 'mssql';
       sql.params = [];
       var statement = build(view, criteria);
       debug(dialect, statement);
