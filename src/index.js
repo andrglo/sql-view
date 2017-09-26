@@ -8,7 +8,13 @@ var sql = {
 
   wrap: function(identifier) {
     if (sql.dialect === 'postgres') {
-      return '"' + identifier + '"';
+      const hasCast = identifier.indexOf('::');
+      let sufix = '';
+      if (hasCast > -1) {
+        sufix = identifier.substr(hasCast);
+        identifier = identifier.substr(0, hasCast);
+      }
+      return '"' + identifier + '"' + sufix;
     } else {
       return '[' + identifier + ']';
     }
