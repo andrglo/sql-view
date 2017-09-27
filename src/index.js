@@ -8,13 +8,21 @@ var sql = {
 
   wrap: function(identifier) {
     if (sql.dialect === 'postgres') {
-      const hasCast = identifier.indexOf('::');
-      let sufix = '';
-      if (hasCast > -1) {
-        sufix = identifier.substr(hasCast);
-        identifier = identifier.substr(0, hasCast);
+      let options = identifier.split(':');
+      identifier = '"' + options[0] + '"';
+      if (options.length > 1) {
+        options = options.slice(1);
+        if (options[0].startsWith('as')) {
+          identifier = `${identifier}::${options[0].substr(2).toLocaleLowerCase()}`;
+        }
+        if (options.includes('ai')) {
+          identifier = `public.f_unaccent(${identifier})`;
+        }
+        if (options.includes('ci')) {
+          identifier = `lower(${identifier})`;
+        }
       }
-      return '"' + identifier + '"' + sufix;
+      return identifier;
     } else {
       return '[' + identifier + ']';
     }
