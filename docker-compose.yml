@@ -1,7 +1,35 @@
-postgres:
-  image: postgres:9.4
-  ports:
-    - 5432:5432
-  environment:
-    POSTGRES_PASSWORD: postgres
-  restart: always
+version: '2'
+
+services:
+
+  dms:
+    image: andrglo/everest:12.0.0
+    hostname: sql-view
+    command: tail -f /dev/null
+    working_dir: /root/sql-view
+    volumes:
+      - ./docker_fish_history:/root/.config/fish/fish_history
+      - .:/root/sql-view
+    environment:
+      - NODE_ENV=test
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PASSWORD=postgres
+      - MSSQL_HOST=mssql
+      - MSSQL_PASSWORD=Passw0rd
+    restart: always
+
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2017-CU12
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Passw0rd
+    restart: always
+
+  postgres:
+      image: postgres:11.2-alpine
+      environment:
+        - POSTGRES_USER=postgres
+        - POSTGRES_PASSWORD=postgres
+      restart: always
+
+

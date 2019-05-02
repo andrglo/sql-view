@@ -1,6 +1,4 @@
 node_modules
-coverage
-.idea
-npm-debug.log
-yarn.lock
-
+.history
+.nyc_output
+yarn-error.log

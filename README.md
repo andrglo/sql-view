@@ -1,4 +1,4 @@
-# sql-view [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Dependency Status][daviddm-image]][daviddm-url] [![Coverage percentage][coveralls-image]][coveralls-url]
+# sql-view [![NPM version][npm-image]][npm-url] [![Dependency Status][daviddm-image]][daviddm-url] [![CircleCI](https://circleci.com/gh/andrglo/sql-view.svg?style=svg)](https://circleci.com/gh/andrglo/sql-view) [![Coverage Status](https://coveralls.io/repos/github/andrglo/sql-view/badge.svg?branch=master)](https://coveralls.io/github/andrglo/sql-view?branch=master)
 > Rewrite a select statement embedding a filter, order, group or pagination using an otions object.
  For MS Sql Server and postgres
 
@@ -13,15 +13,15 @@ $ npm install --save sql-view
 
 ```js
 var sqlView = require('sql-view')('postgres');
-        
-// build(view, criteria)        
+
+// build(view, criteria)
 var view = sqlView.build('SELECT * FROM products'), {
   where: {
     price: {
       lt: '1000'
     }
   });
-console.log(view); 
+console.log(view);
 // => { statement: 'SELECT * FROM (SELECT * FROM "products") t WHERE "price"<$1',
 //      params: [ '1000' ]
 //    }
@@ -32,7 +32,7 @@ view = sqlView.build('products'), {
       lt: '1000'
     }
   });
-console.log(view); 
+console.log(view);
 // => { statement: 'SELECT * FROM "products" WHERE "price"<$1',
 //      params: [ '1000' ]
 //    }
@@ -180,9 +180,5 @@ MIT © [Andre Gloria]()
 
 [npm-image]: https://badge.fury.io/js/sql-view.svg
 [npm-url]: https://npmjs.org/package/sql-view
-[travis-image]: https://travis-ci.org/andrglo/sql-view.svg?branch=master
-[travis-url]: https://travis-ci.org/andrglo/sql-view
 [daviddm-image]: https://david-dm.org/andrglo/sql-view.svg?theme=shields.io
 [daviddm-url]: https://david-dm.org/andrglo/sql-view
-[coveralls-image]: https://coveralls.io/repos/andrglo/sql-view/badge.svg
-[coveralls-url]: https://coveralls.io/r/andrglo/sql-view
