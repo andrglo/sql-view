@@ -8,9 +8,10 @@ const assert = require('assert')
 
 const sql = {
   wrap: function(identifier) {
+    let options = identifier.split(':')
+    identifier = options[0]
     if (sql.dialect === 'postgres') {
-      let options = identifier.split(':')
-      identifier = '"' + options[0] + '"'
+      identifier = '"' + identifier + '"'
       if (options.length > 1) {
         options = options.slice(1)
         if (options[0].startsWith('as')) {
