@@ -1,6 +1,6 @@
 {
   "name": "sql-view",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Rewrite a select statement embedding a filter, sort, group or pagination using an otions object",
   "repository": "https://github.com/andrglo/sql-view.git",
   "author": {
