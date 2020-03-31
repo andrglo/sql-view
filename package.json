@@ -22,15 +22,15 @@
   ],
   "devDependencies": {
     "chai": "^4.2.0",
-    "coveralls": "^3.0.9",
+    "coveralls": "^3.0.11",
     "eslint": "^6.8.0",
     "eslint-config-google": "^0.14.0",
     "glob": "^7.1.6",
-    "json-schema-table": "^1.0.14",
-    "mocha": "^6.2.2",
-    "mssql-cr-layer": "^2.0.5",
+    "json-schema-table": "^1.0.16",
+    "mocha": "^7.1.1",
+    "mssql-cr-layer": "^2.0.7",
     "nyc": "^15.0.0",
-    "pg-cr-layer": "^2.0.9",
+    "pg-cr-layer": "^2.0.10",
     "unorm": "^1.6.0"
   },
   "scripts": {

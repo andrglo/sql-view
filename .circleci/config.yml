@@ -4,16 +4,16 @@ jobs:
   test:
     working_directory: ~/repo
     docker:
-      - image: circleci/node:12.0.0
+      - image: circleci/node:12.16.1
         environment:
           NODE_ENV: test
           POSTGRES_PASSWORD: postgres
           MSSQL_PASSWORD: Passw0rd
-      - image: mcr.microsoft.com/mssql/server:2017-CU12
+      - image: mcr.microsoft.com/mssql/server:2019-CU3-ubuntu-18.04
         environment:
           ACCEPT_EULA: Y
           SA_PASSWORD: Passw0rd
-      - image: postgres:11.2-alpine
+      - image: postgres:12.2-alpine
         environment:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
@@ -64,7 +64,7 @@ jobs:
   publish:
     working_directory: ~/repo
     docker:
-      - image: circleci/node:12.0.0
+      - image: circleci/node:12.16.1
     steps:
       - attach_workspace:
           at: ~/repo
