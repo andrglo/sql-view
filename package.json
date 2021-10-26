@@ -1,6 +1,6 @@
 {
   "name": "sql-view",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "Rewrite a select statement embedding a filter, sort, group or pagination using an otions object",
   "repository": "https://github.com/andrglo/sql-view.git",
   "author": {
@@ -22,15 +22,15 @@
   ],
   "devDependencies": {
     "chai": "^4.3.4",
-    "coveralls": "^3.1.0",
-    "eslint": "^7.26.0",
+    "coveralls": "^3.1.1",
+    "eslint": "^8.1.0",
     "eslint-config-google": "^0.14.0",
-    "glob": "^7.1.7",
-    "json-schema-table": "^1.0.19",
+    "glob": "^7.2.0",
+    "json-schema-table": "^1.0.20",
     "mocha": "^8.4.0",
-    "mssql-cr-layer": "^2.0.11",
+    "mssql-cr-layer": "^2.0.12",
     "nyc": "^15.1.0",
-    "pg-cr-layer": "^2.0.13",
+    "pg-cr-layer": "^2.0.14",
     "unorm": "^1.6.0"
   },
   "scripts": {
