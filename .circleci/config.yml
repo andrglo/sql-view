@@ -9,7 +9,7 @@ jobs:
           NODE_ENV: test
           POSTGRES_PASSWORD: postgres
           MSSQL_PASSWORD: Passw0rd
-      - image: mcr.microsoft.com/mssql/server:2019-CU3-ubuntu-18.04
+      - image: mcr.microsoft.com/mssql/server:2019-CU11-ubuntu-20.04
         environment:
           ACCEPT_EULA: Y
           SA_PASSWORD: Passw0rd
