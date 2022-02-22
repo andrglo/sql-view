@@ -4,7 +4,7 @@ jobs:
   test:
     working_directory: ~/repo
     docker:
-      - image: circleci/node
+      - image: circleci/node:16
         environment:
           NODE_ENV: test
           POSTGRES_PASSWORD: postgres
@@ -64,7 +64,7 @@ jobs:
   publish:
     working_directory: ~/repo
     docker:
-      - image: circleci/node
+      - image: circleci/node:16
     steps:
       - attach_workspace:
           at: ~/repo
