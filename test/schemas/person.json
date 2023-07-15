@@ -18,11 +18,11 @@
       "type": "date"
     },
     "DATNASCZ": {
-      "type": "datetime"
+      "type": "datetime",
+      "timezone": true
     },
     "DATNASCNOZ": {
-      "type": "datetime",
-      "timezone": "ignore"
+      "type": "datetime"
     },
     "VALORLCTO": {
       "type": "number",

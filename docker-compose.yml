@@ -3,7 +3,7 @@ version: '2'
 services:
 
   dms:
-    image: andrglo/everest:18.14.2
+    image: andrglo/everest:latest
     hostname: sql-view
     container_name: sql-view-dms-1
     command: tail -f /dev/null
@@ -20,7 +20,7 @@ services:
     restart: always
 
   mssql:
-    image: mcr.microsoft.com/mssql/server:2019-CU11-ubuntu-20.04
+    image: mcr.microsoft.com/mssql/server:2022-CU1-ubuntu-20.04
     container_name: sql-view-mssql-1
     environment:
       - ACCEPT_EULA=Y
@@ -28,7 +28,7 @@ services:
     restart: always
 
   postgres:
-    image: postgres:15.2-alpine
+    image: andrglo/postgres:15
     container_name: sql-view-postgres-1
     environment:
       - POSTGRES_USER=postgres
