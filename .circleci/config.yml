@@ -60,7 +60,6 @@ jobs:
           name: Tests
           command: |
             pnpm test
-            pnpm run test:report:coverage
       - persist_to_workspace:
           root: ~/repo
           paths: .

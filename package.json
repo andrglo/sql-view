@@ -34,7 +34,6 @@
   },
   "scripts": {
     "test": "mocha --bail --exit --timeout 15000 test/index.js",
-    "test:report:coverage": "report --reporter=text-lcov | coveralls",
     "ssh": "docker exec -it sql-view-dms-1 fish"
   },
   "license": "MIT",
