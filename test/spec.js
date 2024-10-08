@@ -1,12 +1,16 @@
-const chai = require('chai')
-const expect = chai.expect
-chai.should()
 const _ = require('lodash')
 
 const sqlView = require('../src')
 let sv
 
 module.exports = function(options) {
+  let expect
+  before(function() {
+    return import('chai').then(chai => {
+      chai.should()
+      expect = chai.expect
+    })
+  })
   let db
   const nextDay = new Date()
   const datesSaved = []

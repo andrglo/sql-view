@@ -4,16 +4,20 @@ jobs:
   test:
     working_directory: ~/repo
     docker:
-      - image: cimg/node:18.14.2
+      - image: cimg/node:20.17.0
         environment:
           NODE_ENV: test
           POSTGRES_PASSWORD: postgres
           MSSQL_PASSWORD: Passw0rd
-      - image: mcr.microsoft.com/mssql/server:2019-CU11-ubuntu-20.04
+          POSTGRES_HOST: 127.0.0.1
+          MSSQL_HOST: 127.0.0.1
+          MSSQL_USER: sa
+          POSTGRES_USER: postgres
+      - image: mcr.microsoft.com/mssql/server:2022-CU1-ubuntu-20.04
         environment:
           ACCEPT_EULA: Y
           SA_PASSWORD: Passw0rd
-      - image: postgres:15.2-alpine
+      - image: andrglo/postgres:15
         environment:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
@@ -22,14 +26,14 @@ jobs:
       - restore_cache:
           name: Restore NPM Package Cache
           keys:
-            - npm-packages-{{ checksum "package-lock.json" }}
+            - npm-packages-{{ checksum "pnpm-lock.yaml" }}
       - run:
           name: Install dependencies
           command: |
-            npm install
+            pnpm install
       - save_cache:
           name: Save NPM Package Cache
-          key: npm-packages-{{ checksum "package-lock.json" }}
+          key: npm-packages-{{ checksum "pnpm-lock.yaml" }}
           paths:
             - ~/.cache/npm
       - run:
@@ -55,8 +59,8 @@ jobs:
       - run:
           name: Tests
           command: |
-            npm test
-            npm run test:report:coverage
+            pnpm test
+            pnpm run test:report:coverage
       - persist_to_workspace:
           root: ~/repo
           paths: .
@@ -64,7 +68,7 @@ jobs:
   publish:
     working_directory: ~/repo
     docker:
-      - image: cimg/node:18.14.2
+      - image: cimg/node:20.17.0
     steps:
       - attach_workspace:
           at: ~/repo

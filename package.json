@@ -1,6 +1,6 @@
 {
   "name": "sql-view",
-  "version": "1.0.17",
+  "version": "1.0.18",
   "description": "Rewrite a select statement embedding a filter, sort, group or pagination using an otions object",
   "repository": "https://github.com/andrglo/sql-view.git",
   "author": {
@@ -21,21 +21,20 @@
     "sort"
   ],
   "devDependencies": {
-    "chai": "^4.3.7",
+    "chai": "^5.1.1",
     "coveralls": "^3.1.1",
-    "eslint": "^8.45.0",
-    "eslint-config-google": "^0.14.0",
-    "glob": "^10.3.3",
-    "json-schema-table": "^2.0.0",
-    "mocha": "^10.2.0",
-    "mssql-cr-layer": "^3.0.0",
-    "nyc": "^15.1.0",
-    "pg-cr-layer": "^2.0.21",
+    "eslint": "^9.12.0",
+    "glob": "^11.0.0",
+    "json-schema-table": "^2.0.1",
+    "lodash": "^4.17.21",
+    "mocha": "^10.7.3",
+    "mssql-cr-layer": "^3.0.1",
+    "pg-cr-layer": "^2.0.23",
     "unorm": "^1.6.0"
   },
   "scripts": {
-    "test": "nyc mocha --bail --exit --timeout 15000 test/index.js",
-    "test:report:coverage": "nyc report --reporter=text-lcov | coveralls",
+    "test": "mocha --bail --exit --timeout 15000 test/index.js",
+    "test:report:coverage": "report --reporter=text-lcov | coveralls",
     "ssh": "docker exec -it sql-view-dms-1 fish"
   },
   "license": "MIT",

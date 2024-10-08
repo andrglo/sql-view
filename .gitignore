@@ -1,4 +1,2 @@
 node_modules
 .history
-.nyc_output
-yarn-error.log
