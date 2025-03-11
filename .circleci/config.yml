@@ -4,7 +4,7 @@ jobs:
   test:
     working_directory: ~/repo
     docker:
-      - image: cimg/node:20.17.0
+      - image: cimg/node:23.9.0
         environment:
           NODE_ENV: test
           POSTGRES_PASSWORD: postgres
@@ -13,7 +13,7 @@ jobs:
           MSSQL_HOST: 127.0.0.1
           MSSQL_USER: sa
           POSTGRES_USER: postgres
-      - image: mcr.microsoft.com/mssql/server:2022-CU1-ubuntu-20.04
+      - image: mcr.microsoft.com/mssql/server:2022-CU14-ubuntu-20.04
         environment:
           ACCEPT_EULA: Y
           SA_PASSWORD: Passw0rd
@@ -67,7 +67,7 @@ jobs:
   publish:
     working_directory: ~/repo
     docker:
-      - image: cimg/node:20.17.0
+      - image: cimg/node:23.9.0
     steps:
       - attach_workspace:
           at: ~/repo
