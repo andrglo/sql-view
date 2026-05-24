@@ -43,5 +43,10 @@
     "lodash.isdate": "^4.0.1",
     "lodash.isobject": "^3.0.2",
     "lodash.trim": "^4.18.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "form-data": "^2.5.4"
+    }
   }
 }
